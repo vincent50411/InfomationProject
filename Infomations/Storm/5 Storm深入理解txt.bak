@@ -2,8 +2,6 @@ Storm概念抽象描述资料
 
 http://wosyingjun.iteye.com/blog/2316763
 
-资料二
-http://www.cnblogs.com/Jack47/p/storm_intro-1.html
 
 二、Storm组件抽象
 一个Topology的Spout/Bolt对应的多个Task可能分布在多个Supervisor的多个Worker内部。而每个Worker内部又存在多个Executor，根据实际对Topology的配置在运行时进行计算并分配。
