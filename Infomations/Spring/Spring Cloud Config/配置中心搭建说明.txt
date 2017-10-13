@@ -1,0 +1,172 @@
+Spring Cloud Config 搭建， 官方文档：http://cloud.spring.io/spring-cloud-config/spring-cloud-config.html
+http://www.cnblogs.com/skyblog/p/5129603.html
+
+一、配置文件仓库的设置
+
+application:服务名称，一般约束是boot服务在application.yml或者properties中设置的spring.application.name=cloud-config-server；配置文件的命名规则遵循服务名+后缀。
+			但是，很多时候，配置文件的命名可以随意，这时，通过HTTP访问获取配置文件时，applicationname就是配置文件的名称如：application-config-devtest.yml
+			此时，application就是application-config，profile就是devtest， HTTP访问路径可以为：http://localhost:8888/application-config/devtest 等组合。
+
+			{application}反射到spring.application.name。
+profile:环境类型（开发、测试等），在配置文件命名规则中，文件名：{application-name} -{profile},   {profile}反射到spring.profiles.active
+		可以在application.yml或者properties中设置spring.profiles.active=dev, test, mysql
+label: 版本，默认一般是master  就是对同一份配置的不同版本管理   
+Spring Cloud Config提供版本的支持，也就是说对于一个应用的不同部署实例，可以从服务端获取到不同版本的配置，这对于一些特殊场景如：灰度发布，A/B测试等提供了很好的支持。
+
+
+1、使用本地Git库作为配置文件仓库的使用
+A、首先在本地创建git仓库
+$ cd $HOME
+$ mkdir config-repo
+$ cd config-repo
+$ git init .
+$ echo info.foo: bar > cloud-config-server-devlexxxxx.properties
+$ git add -A .
+$ git commit -m "Add application.properties"
+
+
+http://www.cnblogs.com/zhangjianbin/p/6347247.html
+2、使用GitHub做远程配置仓库
+A、先将配置文件在本地修改或者其他地方修改
+B、在上次到GitHub仓库或者其他远程仓库
+
+
+
+ConfigServer 文件系统
+
+GIT做文件系统，文件都会被clone到本地文件系统中，默认这些文件会被放置到以config-repo-为前缀的系统临时目录，
+在 linux 上应该是 /tmp/config-repo-目录，如果你遇到了不可预知的问题出现，你可以通过设置spring.cloud.config.server.git.basedir参数值为非系统临时目录。
+
+Config Server中,还有一种从本地classpath 或文件系统中加载配置文件的方式，可以通过spring.cloud.config.server.native.searchLocations进行设置。
+
+3.2 RefreshScope 注解
+
+我们知道Spring原生提供了一些scope，如singleton，prototype，request等。 为了实现配置更新后，已经注入bean的值也能更新的目的，Spring Cloud提供了一个新的scope - RefreshScope。
+
+Spring Cloud对RefreshScope的定义如下：
+
+A Scope implementation that allows for beans to be refreshed dynamically at runtime (see refresh(String) and refreshAll()). If a bean is refreshed then the next time the bean is accessed (i.e. a method is executed) a new instance is created.
+
+所以，对于那些有注入值的bean，我们可以把它们标记为RefreshScope，这样当运行时发现有配置更新的时候，通过调用RefreshScope.refresh(beanName)或RefreshScope.refreshAll()，从而下次这些bean被使用时会被重新初始化，进而会被重新注入值，所以也就达到了更新的目的。
+
+3.3 ConfigClient 启动顺序
+
+ConfigClient最好要在ConfigServer之后启动，Spring加载配置文件是有顺序的，靠前的配置文件会覆盖靠后的配置文件中相同键的值，如果ConfigServer先启动可以保证ConfigClient将远程的配置文件加载到最前面，如果使用中没有注意到这一点，有可能导致你本地的配置文件先于远程的加载，导致本地的配置覆盖远程配置。当然，你也可以让本地配置和远程配置完全不重复，这样也可以避免键/值覆盖的问题。
+
+后面会进一步说明这部分相关的知识点。
+
+
+二、配置中心服务的搭建
+
+A、创建Spring Boot服务，启用@EnableConfigServer
+@EnableConfigServer
+@SpringBootApplication
+public class CloudConfigServerDemoApplication
+{
+
+	public static void main(String[] args) {
+		SpringApplication.run(CloudConfigServerDemoApplication.class, args);
+	}
+}
+
+B、在application.yml 或者 application.properties中设置配置中心，如果是远程则修改为github的地址
+server.port=8000
+
+spring.application.name=cloud-config-server
+spring.profiles.active=dev, test, mysql,  devlexxxxx    以这类字符串结尾的文件名称
+spring.cloud.config.label=master
+
+spring.cloud.config.server.git.uri=D://Local_Git//config-repo
+spring.cloud.config.server.git.search-paths=cloud-config-server     搜索文件开头字符串
+
+
+注意：
+	spring.application.name 即使{application-name}
+	spring.profiles.active 反射到{profile}，可以任意命名环境，只需要在命名配置文件时，对应即可
+	spring.cloud.config.label反射到{label}
+
+	spring.cloud.config.server.git.search-paths=cloud-config-server  增加配置路径文件的搜索, 因为配置文件的命名可以随意，
+
+	如果配置文件默认不按照规则命名，如果application.properties，则默认{profile：dev/test}都可以访问到该配置文件。
+
+HTTP测试配置中心服务是否正常，注意HTTP 访问路径
+http://localhost:8000/cloud-config-server/devlexxxxx    查找以devlexxxxx 为后缀的properties文件：cloud-config-server.查找以devlexxxxx
+application就是：cloud-config-server
+http://localhost:8000/{application}/{profile}
+
+如果配置中心有很多没有遵循命名规范的配置文件，则都会被默认查找。
+
+/{application}/{profile}[/{label}]
+/{application}-{profile}.yml
+/{label}/{application}-{profile}.yml
+/{application}-{profile}.properties
+/{label}/{application}-{profile}.properties
+
+配置文件的名字一般是有两部分组成，举个例子感受下，alan-provider-data-config-dev.properties，
+其中alan-provider-data-config是第一部分application，这部分建议通过命名规则能让你知道是哪一个项目的配置（可以设置为微服务的名称，通过spring.application.name设置），
+并且客户端要配置spring.cloud.config.name=alan-provider-data-config，才能让客户端知道自己要去服务端找哪一个配置文件。
+dev是第二部分，这部分用以区别配置文件应用的场景，是开发环境、测试环境或者生产环境
+
+
+三、客户端服务的搭建
+
+A、创建Spring Boot工程，idea中选择 config-client依赖。
+@SpringBootApplication
+public class CloudConfigClientDemoApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(CloudConfigClientDemoApplication.class, args);
+	}
+}
+
+B、在resources下新建bootstrap.yml或者bootstarp.properties配置文件，不能在application.properties中设置配置中心服务
+spring:
+  cloud:
+    config:
+      profile: dev  （配置中心服务端设置的环境名称）
+      uri: http://192.168.113.171:8888 （服务端的IP和端口）
+      name: cloud-config-server  （name指向application名称）
+
+
+C、通过占位符从配置中心加载配置信息
+@Configuration
+public class MysqlConfig
+{
+    @Value("${mysqldb.datasource.url}")
+    private String url;
+
+    @Value("${mysqldb.datasource.username}")
+    private String username;
+
+省略
+
+发布业务REST API
+@RestController
+public class CloudClientDemoController
+{
+    @Autowired
+    private MysqlConfig mysqlConfig;
+
+    @RequestMapping("/mysql")
+    public String getMySQLUrl()
+    {
+
+        return mysqlConfig.getUrl();
+    }
+}
+
+1.特别注意 配置中心的地址一定要放在bootstrap.properties中，这个配置文件是由“根”上下文优先加载，可以保证程序启动之初就感知到远程配置中心的存在，
+并从远程获取配置，随后继续启动系统，这点十分重要。
+2.而application.properties是由子上下文加载，加载顺序低于前者，如果配置中心地址放在这里，并且你远程配置了一些启动相关的必要参数，那么，你的程序很可能由于缺少参数而启动失败。
+3.下面这段代码，最关键的是第一行，第二行如果不配置系统默认读取spring.application.name，第三行如果不配置，系统默认default，即：${spring.application.name}.properties 
+4.我们一般的做法是，在系统启动的时候，用命令行传入--spring.cloud.config.profile=dev|prod|test的方式，因为在启动的时候，我们是明确知道我要获取哪套配置的。 
+5.bus相关的配置（本例中用的kafka）完全可以放在远程。
+spring.cloud.config.uri=http://127.0.0.1:${config.port:8888}
+spring.cloud.config.name=alan-provider-data-config
+spring.cloud.config.profile=${config.profile:dev}
+
+spring.cloud.stream.kafka.binder.brokers=10.79.96.52:9092
+spring.cloud.stream.kafka.binder.zk-nodes=10.79.96.52:2182
+http://www.cnblogs.com/zhangjianbin/p/6347247.html
+
+

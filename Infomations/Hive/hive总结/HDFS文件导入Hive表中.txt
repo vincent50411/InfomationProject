@@ -1,0 +1,36 @@
+
+
+第一步：创建hive外在表
+CREATE EXTERNAL TABLE biz_eagleeye (city STRING, country STRING, rpcId STRING, 
+appName STRING, queryKey STRING, msg STRING, kvMap STRING)
+PARTITIONED BY(pt STRING)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '\|'
+STORED AS SEQUENCEFILE;
+
+其中EXTERNAL和PARTITIONED关键字指明表为外表和分区表，STORED AS SEQUENCEFILE是专门指定加载seqFile数据源的，如果是普通文本可换成 TEXTFILE
+
+第二步：从hdfs中加载数据源
+ALTER TABLE biz_eagleeye ADD PARTITION (pt='2013-02-28')
+LOCATION '/group/tlog/zhiyuan';
+
+通过LOCATION关键字给出hdfs文件路径，并给出分区值。特别说明下，加载seqFile时hive默认过滤掉key（将key看做null）然后按指明的分隔符（这里是’\|‘）对value进行切分，如果需要考虑key或较复杂的切分字段方式可以指定自定义的mapper和reducer：
+mapred.mapper.class = org.apache.hadoop.hive.ql.exec.ExecMapper
+hive.input.format  = org.apache.hadoop.hive.ql.io.CombineHiveInputFormat
+mapred.mapper.class = org.apache.hadoop.hive.ql.exec.ExecMapper
+hive.input.format  = org.apache.hadoop.hive.ql.io.CombineHiveInputFormat 
+
+
+
+CREATE EXTERNAL TABLE hive_member_test (traceId STRING, time STRING, provice STRING)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '\|'
+STORED AS TEXTFILE;
+
+
+load data inpath '/user/root/input/input/input/part-r-00000' into table hive_member_test;
+
+ALTER TABLE hive_member_test  
+LOCATION '/user/root/input/input/input';
+
+

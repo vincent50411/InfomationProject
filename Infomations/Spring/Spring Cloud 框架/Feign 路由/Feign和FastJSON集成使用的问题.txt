@@ -1,0 +1,18 @@
+Feign和FastJSON集成使用时，目标服务接口入参如果是JSON字符串时，应用层调用时，不能直接传递json字符串，会提示：
+ java.lang.String cannot be cast to com.alibaba.fastjson.JSONObject 异常、
+
+ 解决办法：
+ 1、Feign定义服务接口时，参数直接使用FastJSON对象，如：
+ @FeignClient("SERVICECENTER-PROVIDER")
+public interface ORMFeignService
+{
+    @RequestMapping(value = "/servicecenter/add", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    String ormAddService(JSONObject jsonParam);
+}
+//直接接受JSONObject参数。
+
+2、Feign和FastJSON任然按照原有配置使用。
+
+
+
+

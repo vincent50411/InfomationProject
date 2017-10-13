@@ -1,0 +1,20 @@
+参考网址：http://www.yiibai.com/spring-boot/non-web-application-example.html
+
+Spring Boot 可以不依赖Tomcat启动服务，应用直接使用命令行启动，提供一个应用运行的主入口或者多个业务入口。
+
+@SpringBootApplication
+public class SpringBootConsoleApplication implements CommandLineRunner {
+
+    public static void main(String[] args) throws Exception {
+
+        SpringApplication.run(SpringBootConsoleApplication.class, args);
+
+    }
+
+    //access command line arguments
+    @Override
+    public void run(String... args) throws Exception {
+        //do something
+    }
+}
+

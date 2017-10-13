@@ -1,0 +1,16 @@
+1、修改主机名称
+修改network文件，
+[root@365~]#vim /etc/sysconfig/network
+
+里面的hostname=XXX中XXX改成自己想要显示的名称
+
+2、查看linux主机名称
+[root@365~]#hostname
+
+3、设置linux主机IP和机器名的对应的关系
+
+主机名称到IP地址映射配置, 打开/etc/hosts文件，添加ip和主机的对应关系如下：
+192.168.0.179   slave-01  
+192.168.0.178   slave-02  
+192.168.0.177   slave-03 
+

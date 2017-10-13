@@ -1,0 +1,18 @@
+public class WordCountHbaseReaderReduce extends Reducer<Text,Text,Text,Text> {
+    private Text result = new Text();
+
+    //设置编码格式
+    private static final String UTF_8 = "UTF-8";
+
+    @Override
+    protected void reduce(Text key, Iterable<Text> values,Context context)
+            throws IOException, InterruptedException {
+        for(Text val:values)
+        {
+            //设置编码格式
+            result.set(val.toString().getBytes(UTF_8));
+
+            context.write(key, result);
+        }
+    }
+}

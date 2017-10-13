@@ -1,0 +1,7 @@
+http://blog.csdn.net/ycy258325/article/details/50561677
+
+to,until都表示范围，二者有何区别？
+
+to为包含上限的闭区间，如：1 to 3,Range为1,2,3;
+
+until不包含上限，如：1 to 3, Range为1,2

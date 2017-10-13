@@ -1,0 +1,22 @@
+
+
+下载spark版本时，需要注意hadoop版本以及scala的版本
+
+下载spark后，解压到文件夹，设置SPARK_HOME和path，然后cmd命令行直接输入spark-shell启动spark。
+在没有做任何设置的情况下，spark-shell会提示C:temp/hive没有权限。这是因为没有在设置权限。需要做以下处理
+
+
+首先检查hadoop的bin目录下是否存在winutils.exe，如果不存在：
+
+去 https://github.com/steveloughran/winutils 选择你安装的Hadoop版本号，然后进入到bin目录下，找到winutils.exe文件，下载方法是点击winutils.exe文件，
+进入之后在页面的右上方部分有一个Download按钮，点击下载即可。 
+- 下载好winutils.exe后，将这个文件放入到Hadoop的bin目录下，我这里是F:\Program Files\hadoop\bin。 
+
+如果存在，或者下载好后，直接在cmd中输入命令：
+F:\Program Files\hadoop\bin\winutils.exe chmod 777 /tmp/hive 
+
+重新启动spark-shell既可，
+
+Spark context available as sc.
+SQL context available as sqlContext.
+只有看到这两个语句了，才说明Spark真正的成功启动了。

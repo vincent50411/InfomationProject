@@ -1,0 +1,10 @@
+问题参考地址：http://wenda.chinahadoop.cn/question/3685
+
+
+Kylin是Hadoop和HBase的客户端，可以部署在能够网络能访问的任意节点。
+
+Kylin要求节点上有hadoop/hive/hbase的命令行环境，启动时根据以上命令行探测对接的集群。
+
+举例来说，如果你不确定Kylin连接那个HBase, 只需在命令行运行hbase shell加以确定即可。
+
+Kylin启动时通过调用命令行 'hbase classpath' 和 `hive -e set | grep 'env:CLASSPATH'` 读取Hadoop配置文件。这也是为什么要求Kylin部署机有 hive, hbase, hadoop 命令行环境。

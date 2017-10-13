@@ -1,0 +1,34 @@
+Exception in thread "main" java.io.IOException: java.net.ConnectException: Call From sjfx/192.168.52.170 to 0.0.0.0:10020 failed on connection exception: java.net.ConnectException: 拒 绝连接; For more details see:  http://wiki.apache.org/hadoop /ConnectionRefused
+    at org.apache.hadoop.mapred.ClientServiceDelegate.invoke(ClientServiceDelegate.java:331)
+    at org.apache.hadoop.mapred.ClientServiceDelegate.getTaskCompletionEvents(ClientServiceDelegate.java:383)
+    at org.apache.hadoop.mapred.YARNRunner.getTaskCompletionEvents(YARNRunner.java:529)
+    at org.apache.hadoop.mapreduce.Job$5.run(Job.java:668)
+    at org.apache.hadoop.mapreduce.Job$5.run(Job.java:665)
+    at java.security.AccessController.doPrivileged(Native Method)
+    at javax.security.auth.Subject.doAs(Subject.java:415)
+    at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1491)
+    at org.apache.hadoop.mapreduce.Job.getTaskCompletionEvents(Job.java:665)
+    at org.apache.hadoop.mapreduce.Job.monitorAndPrintJob(Job.java:1349)
+    at org.apache.hadoop.mapred.JobClient$NetworkedJob.monitorAndPrintJob(JobClient.java:407)
+    at org.apache.hadoop.mapred.JobClient.monitorAndPrintJob(JobClient.java:855)
+    at org.apache.hadoop.mapred.JobClient.runJob(JobClient.java:835)
+    at com.fiveone.game.GameLoginLog.main(GameLoginLog.java:38)
+    at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+    at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    at java.lang.reflect.Method.invoke(Method.java:606)
+    at org.apache.hadoop.util.RunJar.main(RunJar.java:212)
+
+
+1、14/04/04 17:32:35 INFO ipc.Client: Retrying connect to server: 0.0.0.0/0.0.0.0:10020. Already tried 0 time(s); retry policy is RetryUpToMaximumCountWithFixedSleep(maxRetries=10, sleepTime=1 SECONDS)
+这个问题是由于没有启动historyserver引起的，解决办法：
+在安装kylin的机器上，mapred-site.xml配置文件中添加：
+<property>  
+        <name>mapreduce.jobhistory.address</name>  
+        <value>vm-centeros10.hkgp.net:10020</value>  
+</property>
+
+---vm-centeros10.hkgp.net 是namenode的节点。
+
+在namenode上执行命令：mr-jobhistory-daemon.sh start historyserver   关闭服务是 mr-jobhistory-daemon.sh stop historyserver
+这样在，namenode上会启动JobHistoryServer服务，可以在historyserver的日志中查看运行情况

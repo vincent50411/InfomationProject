@@ -1,0 +1,45 @@
+http://www.cnblogs.com/ggjucheng/archive/2013/01/03/2843318.html
+
+hive文件存储格式包括以下几类：
+TEXTFILE
+SEQUENCEFILE
+RCFILE   
+自定义格式
+其中TEXTFILE为默认格式，建表时不指定默认为这个格式，导入数据时会直接把数据文件拷贝到hdfs上不进行处理。
+SequenceFile,RCFile格式的表不能直接从本地文件导入数据，数据要先导入到textfile格式的表中，然后再从textfile表中用insert导入到SequenceFile,RCFile表中。
+
+TEXTFILE
+默认格式，数据不做压缩，磁盘开销大，数据解析开销大。
+可结合Gzip、Bzip2使用（系统自动检查，执行查询时自动解压），但使用这种方式，hive不会对数据进行切分，从而无法对数据进行并行操作。
+
+SEQUENCEFILE
+SequenceFile是Hadoop API提供的一种二进制文件支持，其具有使用方便、可分割、可压缩的特点。
+SequenceFile支持三种压缩选择：NONE, RECORD, BLOCK。 Record压缩率低，一般建议使用BLOCK压缩。
+
+--SEQUENCEFILE存储模式的使用
+ create table seq_test001(ID INT, USER_NAME STRING, AGE INT, SEX STRING)  
+STORED AS SEQUENCEFILE; 
+
+hive> SET hive.exec.compress.output=true;  
+hive> SET io.seqfile.compression.type=BLOCK;  
+
+hive> INSERT OVERWRITE TABLE seq_test001 SELECT * FROM user_test09;  
+
+RCFILE
+RCFILE是一种行列存储相结合的存储方式。
+首先，其将数据按行分块，保证同一个record在一个块上，避免读一个记录需要读取多个block。其次，块数据列式存储，有利于数据压缩和快速的列存取
+
+实践证明RCFile目前没有性能优势, 只有存储上能省10%的空间, 作者自己都承认. Facebook用它也就是为了存储,. RCFile目前没有使用特殊的压缩手段,
+例如算术编码, 后缀树等, 没有像InfoBright那样能skip 大量io.
+
+
+
+
+
+
+
+
+
+
+
+

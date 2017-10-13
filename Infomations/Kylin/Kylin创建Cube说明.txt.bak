@@ -1,0 +1,32 @@
+Kylin Cube创建过程说明， 参考文档：http://www.cnblogs.com/sh425/p/5778953.html
+
+1、创建project
+2、创建数据仓库
+	a、基础信息设置
+	b、选择事实表和维度表的关联关系，主外键关联或者多字段关联。
+	c、设置维度，数据仓库中选择的维度，作为cube维度的依赖，也是查询返回字段的依赖
+
+3、创建Cube
+
+	a、cube基础信息设置
+	b、cube维度设置
+
+Auto Merge Time Ranges (days): merge the small segments into medium and large segment automatically. If you don’t want to auto merge, remove the default two ranges.
+创建Cube的时候，需要设置自动合并segment的时间区间，做增量cube
+
+
+kylin的实现是一个cube（这里是指逻辑上的cube）中可以包含多个segment：
+理解：一个cube创建后，可以被多次build，每一次build都会产生一个新的segment，每一个segment对应着一个物理cube，在实际存储上对应着一个hbase的一个表。
+
+
+增量cube
+     由于kylin的核心在于预计算缓存数据，那么对于实时的数据查询的支持就不如mondrian好了，但是一般情况下我们数据分析并没有完全实时的要求，数据延迟几个小时甚至一天是可以接受的，kylin提供了增量cube的接口，kylin的实现是一个cube（这里是指逻辑上的cube）中可以包含多个segment，每一个segment对应着一个物理cube，在实际存储上对应着一个hbase的一个表。用户定义根据某一个字段进行增量（目前仅支持时间，并且这个字段必须是hive的一个分区字段），在使用的时候首先需要定义好cube的定义，可以指定一个时间的partition字段作为增量cube的依赖字段，其实这个选择是作为原始数据选择的条件，例如选择起始时间A到B的数据那么创建的cube则会只包含这个时间段的数据聚合值，创建完一个cube之后可以再次基于以前的cube进行build，每次build会生成一个新的segment，只不过原始数据不一样了（根据每次build指定的时间区间），每次查询的时候会查询所有的segment聚合之后的值进行返回，有点类似于tablet的存储方式，但是当segment存在过多的时候查询效率就会下降，因此需要在存在多个segment的时候将它们进行合并，合并的时候其实是指定了一个时间区间，内部会选择这个时间区间内的所有segment进行合并，合并完成之后使用新的segment替换被合并的多个segment，合并的执行时非常迅速的，数据不需要再从HDFS中获取，直接将两个hbase表中相同key的数据进行聚合就可以了。但是有一点需要注意的是当合并完成之后，被合并的几个segment所对应的hbase表并没有被删除。实际的使用过程中对于增量的cube可以写个定时任务每天凌晨进行build，当达到一个数目之后进行merge（其实每次build完成之后都进行merge也应该是可以的）。
+
+
+
+     cube的词典树
+     kylin的cube数据是作为key-value结构存储在hbase中的，key是每一个维度成员的组合值，不同的cuboid下面的key的结构是不一样的，例如cuboid={brand，product，year}下面的一个key可能是brand='Nike'，product='shoe'，year=2015，那么这个key就可以写成Nike:shoe:2015，但是如果使用这种方式的话会出现很多重复，所以一般情况下我们会把一个维度下的所有成员取出来，然后保存在一个数组里面，使用数组的下标组合成为一个key，这样可以大大节省key的存储空间，kylin也使用了相同的方法，只不过使用了字典树（Trie树），每一个维度的字典树作为cube的元数据以二进制的方式存储在hbase中，内存中也会一直保持一份。
+ 
+
+
+

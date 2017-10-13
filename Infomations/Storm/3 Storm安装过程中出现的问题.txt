@@ -1,0 +1,16 @@
+参考地址：http://blog.csdn.net/wfzczangpeng/article/details/52711389
+
+在使用storm的一些命令时如 bin/storm list时，会抛出下面的异常信息。
+org.apache.storm.utils.NimbusLeaderNotFoundException: Could not find leader nimbus from seed hosts....
+
+解决办法：
+到zookeeper目录，删除zk里面的storm节点，重启zk（视情况可以省略）
+bin/zkCli.sh 
+
+ls /
+注意：delete只能删除不包含子节点的节点，如果要删除的节点包含子节点，使用rmr命令 
+rmr /storm
+
+重启zookeeper节点： 有的版本没有restart操作，可以省略这一步
+bin/zkServer.sh restart
+

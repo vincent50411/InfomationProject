@@ -1,0 +1,9 @@
+/* 配置线程池大小,默认值10个. 建议值:请求高峰时99.5%的平均响应时间 + 向上预留一些即可 */ 
+private final HystrixProperty corePoolSize; 
+/* 配置线程值等待队列长度,默认值:-1 建议值:-1表示不等待直接拒绝,测试表明线程池使用直接决绝策略+ 合适大小的非回缩线程池效率最高.所以不建议修改此值。 当使用非回缩线程池时，queueSizeRejectionThreshold,keepAliveTimeMinutes 参数无效 */
+private final HystrixProperty maxQueueSize;
+
+作者：star24
+链接：http://www.jianshu.com/p/b9af028efebb
+來源：简书
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。

@@ -1,0 +1,70 @@
+
+Idea中，在待测试的controller中 按快捷键 Ctrl + Shift+ T ，按照提示生成测试类文件。
+
+在新生成的测试类文件头部加入以下2个注解即可
+@RunWith(SpringRunner.class)
+@SpringBootTest
+
+
+在@Befor注解的方法内实现，MockMvc对象的生成和初始化。
+	@Autowired
+    private WebApplicationContext context;
+
+    private MockMvc mockMvc;
+
+    @Before
+    public void setupMockMvc() throws Exception
+    {
+        mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+    }
+
+
+在@Test注解的测试类中实现测试方法。
+
+ @org.junit.Test
+    public void testJunit() throws Exception
+    {
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/dimesion/test");
+
+        mockMvc.perform(requestBuilder).andExpect(status().isOk()).andExpect(content().string("{JSON_DATA}"));
+
+
+
+
+    }
+
+其中，perform是提供访问Rest的接口，可以接受GET POST PUT DELETE的请求。
+andExpect为判定接口，接受的参数为ResultMatcher， status()是对响应状态的判断，content是对响应体的判断
+引入,使status、content、equalTo函数可用
+import static org.hamcrest.Matchers.equalTo;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+
+还可以支持对json格式的响应结果进行判断。
+需要加入以下依赖，添加jsonPath依赖
+<dependency>
+			<groupId>com.jayway.jsonpath</groupId>
+			<artifactId>json-path</artifactId>
+		</dependency>
+
+
+
+@org.junit.Test
+    public void testJunit2() throws Exception
+    {
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/dimesion/test2");
+
+        mockMvc.perform(requestBuilder).
+                andExpect(status().isOk()).
+                andExpect(jsonPath("$.testName").value("200"));
+
+    }
+
+andExpect(...)可以在perform(...)函数调用后多次调用，表示对多个条件的判断，这个函数的参数类型是ResultMatcher接口，
+在MockMvcResultMatchers这这个类中提供了很多返回ResultMatcher接口的工具函数。
+这个函数使得可以检测同一个web请求的多个方面，包括HTTP响应状态码（response status），
+响应的内容类型（content type），会话中存放的值，检验重定向、model或者header的内容等等。
+这里需要通过第三方库json-path检测JSON格式的响应数据：检查json数据包含正确的元素类型和对应的值，
+例如jsonPath("$.name").value("中文测试")用于检查在根目录下有一个名为name的节点，并且该节点对应的值是“中文测试”。
+

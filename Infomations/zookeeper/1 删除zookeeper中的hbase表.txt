@@ -1,0 +1,16 @@
+很多时候由于HBase因为HDFS被格式化，导致一些元数据异常，需要到zookeeper中清理异常数据
+
+
+
+首先进入zookeeper节点（任意节点）
+
+cd /ZOOKEEPER_HOME/bin下， 可以看到zkCli.sh
+cd .. 执行zkCli.sh（bin/zkCli.sh）,命令行会提示进入zkClin模式，可以任意键入字符串，会提示可执行的命令
+
+ls /  (该命令会显示zookeeper根节点下的目录)[zookeeper, yarn-leader-election, hbase, hadoop-ha, kylin]
+
+为了安全起见，直接进入 ls /hbase/table  显示：[kylin_metadata, kylin_metadata_user, hbase:meta, KYLIN_QQZSBTMY2L, hbase:namespace, test01, kylin_metadata_acl]
+删除kylin相关的表：rmr /hbase/table/kylin_metadata
+
+
+如果要删除hbase这个目录，则hbase需要重启

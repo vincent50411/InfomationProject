@@ -1,0 +1,18 @@
+Storm概念抽象描述资料
+
+http://wosyingjun.iteye.com/blog/2316763
+
+
+二、Storm组件抽象
+一个Topology的Spout/Bolt对应的多个Task可能分布在多个Supervisor的多个Worker内部。而每个Worker内部又存在多个Executor，根据实际对Topology的配置在运行时进行计算并分配。
+
+
+
+Topology ：Storm对一个分布式计算应用程序的抽象，目的是通过一个实现Topology能够完整地完成一件事情（从业务角度来看）。一个Topology是由一组静态程序组件（Spout/Bolt）、组件关系Streaming Groups这两部分组成。
+Spout ：描述了数据是如何从外部系统（或者组件内部直接产生）进入到Storm集群，并由该Spout所属的Topology来处理，通常是从一个数据源读取数据，也可以做一些简单的处理（为了不影响数据连续地、实时地、快速地进入到系统，通常不建议把复杂处理逻辑放在这里去做）。
+Bolt ：描述了与业务相关的处理逻辑。
+上面都是一些表达静态事物（组件）的概念，我们编写完成一个Topology之后，上面的组件都以静态的方式存在。下面，我们看一下提交Topology运行以后，会产生那些动态的组件（概念）：
+
+Task ：Spout/Bolt在运行时所表现出来的实体，都称为Task，一个Spout/Bolt在运行时可能对应一个或多个Spout Task/Bolt Task，与实际在编写Topology时进行配置有关。
+Worker ：运行时Task所在的一级容器，Executor运行于Worker中，一个Worker对应于- - Supervisor上创建的一个JVM实例
+Executor ：运行时Task所在的直接容器，在Executor中执行Task的处理逻辑；一个或多个Executor实例可以运行在同一个Worker进程中，一个或多个Task可以运行于同一个Executor中；在Worker进程并行的基础上，Executor可以并行，进而Task也能够基于Executor实现并行计算

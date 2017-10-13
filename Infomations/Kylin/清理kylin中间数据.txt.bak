@@ -1,0 +1,8 @@
+清理Kylin的中间存储数据(HDFS & HBase Tables)
+
+Kylin在创建cube过程中会在HDFS上生成中间数据。另外，当我们对cube执行purge/drop/merge时，一些Hbase的表可能会保留在hbase中，而这些表不再被查询，尽管Kylin会做一些自动的垃圾回收，但是它可能不会覆盖所有方面，所以需要我们能够每隔一段时间做一些离线存储的清理工作。具体步骤如下：
+1.     检查哪些资源需要被清理，这个操作不会删除任何内容：
+${KYLIN_HOME}/bin/kylin.sh org.apache.kylin.storage.hbase.util.StorageCleanupJob --delete false
+ 
+2.     根据上面的输出结果，挑选一两个资源看看是否是不再需要的。接着，在上面的命令基础上添加“–delete true”选项，开始执行清理操作，命令执行完成后，中间的HDFS文和盒HTables表就被删除了。
+${KYLIN_HOME}/bin/kylin.sh org.apache.kylin.storage.hbase.util.StorageCleanupJob --delete true

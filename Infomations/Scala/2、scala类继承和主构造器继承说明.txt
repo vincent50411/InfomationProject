@@ -1,0 +1,23 @@
+1. 先说主构造函数，也就是英文资料中说的primary constructor，它是和类的定义混杂在一起的，即定义类的时候，就指明了这个类的成员变量参数，
+还有，就是在类中，除了def定义的成员函数之外的所有操作，都可以看作是构造函数的行为组成部分，不管是变量赋值还是函数调用。
+而java的类定义和构造函数的定义是分开的。
+
+2. 再说派生的构造函数，即java中可以定义多个构造函数，这点，在java里非常简单，就是方法的重载呗。
+但是，在scala里面，要定义多个构造方法，就必须直接或则间接的调用主构造函数。而且调用的时候，必须通过关键字this来操作。
+def this(fn : String, ln : String) { 
+ 　　this(fn, ln, null)
+ }
+
+
+3. 在scala中，若有继承，那么，只有主构造函数才能将参数的值传递到父类的构造函数中去。
+
+class SuperUser[T](param:T)
+class User[T](userName:T, age:Int) extends SuperUser[T](userName:T)
+//子类主构造器中的参数名称，直接传递给父类的主构造器，参数名称一致
+class ChildUser[T](userName:T, age:Int) extends User[T](userName:T, age:Int) 
+
+
+4. 在scala中，若子类继承了父类，但是想在子类中重写父类的某个函数，则在子类中必须用关键字override对父类的函数进行改写， 否则会出现语法错误。要想调用父类的同名函数，可以通过super关键字进行，这点与java是一致的。
+
+//返回值做了上下界设置；这里的意思是T是U的上界，即U的类型必须小于或者等于T
+override def getUserName[U <: T]: T = super.getUserName

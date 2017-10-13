@@ -1,0 +1,10 @@
+Spark支持两种类型操作：Transformations和Actions。Transformation从一个已知的RDD数据集经过转换得到一个新的RDD数据集，
+这些Transformation操作包括map、filter、flatMap、union、join等，而且Transformation具有lazy的特性，调用这些操作并没有立刻执行对已知RDD数据集的计算操作，
+而是在调用了另一类型的Action操作才会真正地执行。Action执行，会真正地对RDD数据集进行操作，返回一个计算结果给Driver程序，或者没有返回结果，
+如将计算结果数据进行持久化，Action操作包括reduceByKey、count、foreach、collect等。关于Transformations和Actions更详细内容，可以查看官网文档。
+同样、Spark Streaming提供了类似Spark的两种操作类型，分别为Transformations和Output操作，它们的操作对象是DStream，
+作用也和Spark类似：Transformation从一个已知的DStream经过转换得到一个新的DStream，而且Spark Streaming还额外增加了一类针对Window的操作，
+当然它也是Transformation，但是可以更灵活地控制DStream的大小（时间间隔大小、数据元素个数），
+例如window(windowLength, slideInterval)、countByWindow(windowLength, slideInterval)、reduceByWindow(func, windowLength, slideInterval)等。
+Spark Streaming的Output操作允许我们将DStream数据输出到一个外部的存储系统，如数据库或文件系统等，执行Output操作类似执行Spark的Action操作，
+使得该操作之前lazy的Transformation操作序列真正地执行。

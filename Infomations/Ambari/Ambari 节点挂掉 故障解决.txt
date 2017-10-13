@@ -1,0 +1,12 @@
+参考地址： http://blog.csdn.net/miluosx/article/details/70160840
+
+
+查看ambari节点运行状态命令：
+ambari-agent status
+
+ambari日志路径为：
+cd /
+/var/log/ambari-agent/
+
+ambari节点启动命令：
+ambari-agent start

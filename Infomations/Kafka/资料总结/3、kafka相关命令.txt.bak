@@ -1,0 +1,6 @@
+
+
+##控制台接收消息
+bin/kafka-console-consumer.sh --zookeeper  192.168.197.170:2181,192.168.197.171:2181  --from-beginning --topic test
+##控制台发送消息
+bin/kafka-console-producer.sh --broker-list  192.168.197.170:9092,192.168.197.171: 9092    --topic test

@@ -1,0 +1,10 @@
+hadoop MapReduce程序编写完成后，需要上传到linux服务器集群运行，
+1、IDE中将程序打包jar
+
+2、可以使用FileZilla工具上传IDE打包后的jar
+
+3、使用ssh远程连接Linux服务器，集群namenode节点。进入jar包所在的文件夹（任意目录）。
+
+4、运行jar。hadoop jar test.jar com.huntkey.test.TestMainClass [输入参数]
+
+

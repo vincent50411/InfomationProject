@@ -1,0 +1,41 @@
+参考网址：http://www.yiibai.com/spring-boot/non-web-application-example.html
+
+Spring Boot 可以不依赖Tomcat启动服务，应用直接使用命令行启动，提供一个应用运行的主入口或者多个业务入口。
+
+@SpringBootApplication
+public class SpringBootConsoleApplication implements CommandLineRunner {
+
+    @Autowired
+    private HelloMessageService helloService;
+
+    public static void main(String[] args) throws Exception {
+
+        //disabled banner, don't want to see the spring logo
+        SpringApplication app = new SpringApplication(SpringBootConsoleApplication.class);
+        app.setBannerMode(Banner.Mode.OFF);
+        app.run(args);
+
+    }
+
+    // Put your logic here.
+    @Override
+    public void run(String... args) throws Exception {
+
+        if (args.length > 0) {
+            System.out.println(helloService.getMessage(args[0].toString()));
+        } else {
+            System.out.println(helloService.getMessage());
+        }
+
+        exit(0);
+    }
+}
+
+
+命令行启动Spring Boot的方式：
+
+java -jar   huntkey-kylin-manager-module-1.0-SNAPSHOT.jar  single_build 6f920e5366e211e7b2e4005056bc4879 782df1e65b64468280d51d6bf8eb54f8
+
+也可以通过classpath直接启动，因为spring boot是采用org.springframework.boot.loader.JarLauncher 启动main函数的。可参见target下MANIFEST.MF文件描述
+
+java -classpath huntkey-kylin-manager-module-1.0-SNAPSHOT.jar org.springframework.boot.loader.JarLauncher single_build 6f920e5366e211e7b2e4005056bc4879 782df1e65b64468280d51d6bf8eb54f8

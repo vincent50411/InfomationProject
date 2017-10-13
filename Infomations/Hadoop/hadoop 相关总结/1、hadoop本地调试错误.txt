@@ -1,0 +1,30 @@
+运行map reduce任务报错：
+
+(null) entry in command string: null chmod 0700
+
+
+
+解决办法：
+
+在https://github.com/SweetInk/hadoop-common-2.7.1-bin
+
+中下载winutils.exe,libwinutils.lib 拷贝到%HADOOP_HOME%\bin目录 。
+
+
+
+再次执行程序，报错：
+
+Exception in thread "main" java.lang.UnsatisfiedLinkError: org.apache.hadoop.io.nativeio.NativeIO$Windows.access0(Ljava/lang/String;I)Z
+	at org.apache.hadoop.io.nativeio.NativeIO$Windows.access0(Native Method)
+	at org.apache.hadoop.io.nativeio.NativeIO$Windows.access(NativeIO.java:609)
+	at org.apache.hadoop.fs.FileUtil.canRead(FileUtil.java:977)
+
+
+
+	在https://github.com/SweetInk/hadoop-common-2.7.1-bin中下载hadoop.dll，并拷贝到c:\windows\system32目录中。
+
+
+
+执行map reduce程序， 正常。
+
+注意：程序中的路径都要写windows文件系统中的路径了，不再是hdfs中的路径。

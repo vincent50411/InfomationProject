@@ -1,0 +1,43 @@
+
+首先需要知道hive表存放的路径
+
+hadoop dfs -ls  /apps/hive/warehouse/kylin_cal_dt|awk -F ' ' '{print $5}'|awk '{a+=$1}END{print a}'
+
+
+一、Hive下查看数据表信息的方法
+方法1：查看表的字段信息
+desc table_name;
+
+方法2：查看表的字段信息及元数据存储路径
+desc extended table_name;
+
+方法3：查看表的字段信息及元数据存储路径
+desc formatted table_name;
+
+备注：查看表元数据存储路径时，推荐方法3，信息比较清晰。
+
+二、查看表容量大小
+方法1：查看一个hive表文件总大小时(单位为Byte)，我们可以通过一行脚本快速实现，其命令如下：
+--#查看普通表的容量
+$ hadoop fs -ls  /user/hive/warehouse/table_name|awk -F ' ' '{print $5}'|awk '{a+=$1}END{print a}'
+
+48
+ 
+这样可以省去自己相加，下面命令是列出该表的详细文件列表
+$ hadoop fs -ls  /user/hive/warehouse/table_name
+
+
+--#查看分区表的容量 
+$ hadoop fs -ls  /user/hive/warehouse/table_name/yyyymm=201601|awk -F ' ' '{print $5}'|awk '{a+=$1}END
+
+{print a/(1024*1024*1024)}'
+39.709
+ 
+这样可以省去自己相加，下面命令是列出该表的详细文件列表
+$ hadoop fs -ls  /user/hive/warehouse/table_name/yyyymm=201601
+ 
+方法2：查看该表总容量大小，单位为G
+$ hadoop fs -du /user/hive/warehouse/table_name|awk '{ SUM += $1 } END { print SUM/(1024*1024*1024)}'
+
+
+

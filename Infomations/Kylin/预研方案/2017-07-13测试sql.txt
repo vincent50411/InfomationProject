@@ -1,0 +1,63 @@
+
+select b.year_beg_dt, c.dept_code_0, c.dept_code_1, d.tret_id_0, count(sales_value) from hive_t_hk_sales a 
+join kylin_cal_dt b on a.sales_time = b.cal_dt 
+join hive_t_hk_dept c on a.fk_dept = c.pk_col
+join hive_t_hk_prod d on a.fk_prod = d.pk_col
+where b.year_beg_dt is not null and c.dept_code_0 is not null and c.dept_code_1 is not null
+group by b.year_beg_dt, c.dept_code_0, c.dept_code_1, d.tret_id_0
+
+
+
+select b.year_beg_dt, c.dept_code_0, c.dept_code_1, c.dept_code_2, c.dept_code_3, c.dept_code_4, c.dept_code_5, c.dept_code_6, c.dept_code_7, c.dept_code_8, sum(sales_value) from hive_t_hk_sales a 
+join kylin_cal_dt b on a.sales_time = b.cal_dt 
+join hive_t_hk_dept c on a.fk_dept = c.pk_col
+join hive_t_hk_employ y on a.fk_employ = y.pk_col
+join hive_t_hk_gw g on a.fk_gw = g.pk_col
+where c.dept_code_0 is not null
+group by b.year_beg_dt, b.qtr_beg_dt, b.month_beg_dt, week_beg_dt,
+c.dept_code_0, c.dept_code_1, c.dept_code_2, c.dept_code_3, c.dept_code_4, c.dept_code_5, c.dept_code_6, c.dept_code_7, c.dept_code_8,
+y.pk_col, g.pk_col
+
+
+
+select b.year_beg_dt, c.dept_code_0, c.dept_code_1, c.dept_code_2, c.dept_code_3, c.dept_code_4, c.dept_code_5, c.dept_code_6, c.dept_code_7, c.dept_code_8, sum(sales_value) from hive_t_hk_sales a 
+join kylin_cal_dt b on a.sales_time = b.cal_dt 
+join hive_t_hk_dept c on a.fk_dept = c.pk_col
+join hive_t_hk_employ y on a.fk_employ = y.pk_col
+join hive_t_hk_gw g on a.fk_gw = g.pk_col
+join hive_t_hk_prod p on a.fk_prod = p.pk_col
+join hive_t_hk_custom m on a.fk_custom = m.pk_col
+join hive_t_hk_store s on a.fk_store = s.pk_col
+where c.dept_code_0 is not null
+group by b.year_beg_dt, b.qtr_beg_dt, b.month_beg_dt, week_beg_dt,
+c.dept_code_0, c.dept_code_1, c.dept_code_2, c.dept_code_3, c.dept_code_4, c.dept_code_5, c.dept_code_6, c.dept_code_7, c.dept_code_8,
+y.pk_col, g.pk_col, p.prod_tret_id_0, p.prod_tret_id_1, p.prod_tret_id_2, p.prod_tret_id_3, p.prod_tret_id_4, p.prod_tret_id_5,
+m.custom_tret_id_0, m.custom_tret_id_1, m.custom_tret_id_2, m.custom_tret_id_3, m.custom_tret_id_4, m.custom_tret_id_5,
+s.store_tret_id_0, s.store_tret_id_1, s.store_tret_id_2, s.store_tret_id_3, s.store_tret_id_4, s.store_tret_id_5, s.store_tret_id_6, s.store_tret_id_7, store_tret_id_8
+
+
+查询结果2s以内
+select sum(a.sales_value) from hive_t_hk_sales a 
+join hive_t_hk_dept b on a.fk_dept = b.pk_col
+join kylin_cal_dt c on a.sales_time = c.cal_dt
+join hive_t_hk_prod d on a.fk_prod = d.pk_col
+join hive_t_hk_custom e on a.fk_custom = e.pk_col
+join hive_t_hk_store s on a.fk_store = s.pk_col
+join hive_t_hk_gw g on a.fk_gw = g.pk_col
+join hive_t_hk_employ y on a.fk_employ = y.pk_col
+group by c.year_beg_dt, 
+b.dept_code_3,
+d.prod_tret_id_3, 
+e.custom_tret_id_2, 
+s.store_tret_id_1, 
+g.pk_col, 
+y.pk_col
+
+org.apache.hadoop
+hadoop-common  2.6.5
+
+/hadoop/hdfs/hdf_test/input/input_001
+
+/hadoop/hdfs/hdf_test/output/output_001
+
+

@@ -1,0 +1,36 @@
+ http://blog.csdn.net/yuan_xw/article/details/48650019
+
+
+class Outer(name:String){
+	/ /语法使得outer变量指向Outer.this。等同于this的操作。对这个变量，可以 使用任何合法的名称。
+	outer=>
+
+	def say():Unit={
+		outer.name;
+	}
+}
+
+
+伴生对象
+    在Java或C++中即有实例方法又有静态方法。在Scala可以通过类与同名的“伴生”对象来达到同样的目的。
+   类和它的伴生对象可以互相访问私有特性。
+   它们必须在于同一个源文件中。
+// 伴生对象(一般情况下，做为伴生类的静态区域)  
+        object University {  
+          private var studentNo = 0;  
+          def newStudentNo(): Int = {  
+            studentNo = studentNo + 1  
+            studentNo  
+          }  
+        }  
+          
+        // 伴生类  
+        class University {  
+          var id = University.studentNo;  
+          private var number = 0;  
+          def adClass(number: Int) {  
+            this.number += number;  
+          }  
+        }  
+
+

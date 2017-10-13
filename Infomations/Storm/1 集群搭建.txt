@@ -1,0 +1,4 @@
+
+在storm conf下的 storm.yaml中 nimbus.host: "master"这一行前面的空格删除，以及其他行配置前面不能有空格。否则会启动异常。
+
+

@@ -1,0 +1,68 @@
+http://www.aboutyun.com/thread-7458-1-1.html
+
+最后归纳一下Hive中表与外部表的区别：
+1、在导入数据到外部表，数据并没有移动到自己的数据仓库目录下，也就是说外部表中的数据并不是由它自己来管理的！而表则不一样；
+2、在删除表的时候，Hive将会把属于表的元数据和数据全部删掉；而删除外部表的时候，Hive仅仅删除外部表的元数据，数据是不会删除的！
+那么，应该如何选择使用哪种表呢？在大多数情况没有太多的区别，因此选择只是个人喜好的问题。
+但是作为一个经验，如果所有处理都需要由Hive完成，那么你应该创建表，否则使用外部表！
+
+
+
+hive内部表在创建语句上没有EXTERNAL关键字 和LOCATION字段
+
+注意：复制和移动的区别
+1、导入hive表中的数据源来自本地系统文件夹（/root/local_test路径是Linux本地文件系统路径）
+load data local inpath '/root/local_test/local_hive_txt.txt' into table user_test09;
+hive内部表是将本地系统文件夹中的文件复制到HDFS文件系统中，在从HDFS文件系统中移动到hive目录下默认/user/hive/warehouse
+（其实在Hive的${HIVE_HOME}/conf/hive-site.xml配置文件的hive.metastore.warehouse.dir属性指向的就是Hive表数据存放的路径）。
+
+2、hive数据源来自hdfs
+load data inpath '/user/root/test/local_hive_txt.txt' into table USER_INFO_TB;
+
+内部表创表语句：
+CREATE  TABLE USER_INFO_TB (ID INT, USER_NAME STRING, AGE INT, SEX STRING)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ' '
+STORED AS TEXTFILE;
+内部表所有的表数据都保存在/user/hive/warehouse下，以表名称为文件夹名称的文件夹中。
+内布表无法实现数据源共享，如果需要共享数据源，则只能保存多份，因为数据源被移动到了hive下
+
+外部表创建表语句：
+CREATE EXTERNAL TABLE user_test09(ID INT, USER_NAME STRING, AGE INT, SEX STRING)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ' '
+LOCATION '/root/local_test';
+外部表多了EXTERNAL和LOCATION关键字
+LOCATION关键字指定的是hive保存表数据到hdfs文件系统上的目录，如果指定了该值，则hive不会在/user/hive/warehouse下创建文件夹以表名称为文件夹名称。
+外部表可以做数据源共享，因为指定了hdfs上的 数据文件夹。
+
+
+
+hive元数据保存在关系型数据库，一般为mysql，关键字典信息如下：
+
+表名										说明													关联键
+BUCKETING_COLS
+COLUMNS				Hive表字段信息(字段注释，字段名，字段类型，字段序号)				SD_ID
+DBS						元数据库信息，存放HDFS路径信息										DB_ID
+PARTITION_KEYS		Hive分区表分区键															PART_ID
+SDS						所有hive表、表分区所对应的hdfs数据目录和数据格式。				SD_ID,SERDE_ID
+TBLS					所有hive表的基本信息													TBL_ID,SD_ID
+SD_PARAMS			序列化反序列化信息，如行分隔符、列分隔符、NULL的表示字符等	SERDE_ID
+SEQUENCE_TABLE		SEQUENCE_TABLE表保存了hive对象的下一个可用ID，
+						如’org.apachtastore.model.MTable’, 21，则下一个新创建的hive表其
+						TBL_ID就是21，同时SEQUENCE_TABLE表中271786被更新为26(这里每次都是+5?)。
+						同样，COLUMN，PARTITION等都有相应的记录
+SERDES
+SERDE_PARAMS
+SORT_COLS
+TABLE_PARAMS			表级属性，如是否外部表，表注释等									TBL_ID
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,44 @@
+
+Spring Boot中集成fastjson
+1、pom中增加依赖
+<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.2.32</version>
+		</dependency>
+
+2、Application中增加bean的注入
+	@Bean
+	public HttpMessageConverters fastJsonHttpMessageConverters() {
+		FastJsonHttpMessageConverter fastConverter = new FastJsonHttpMessageConverter();
+		//如果不增加以下类型支持，可能会出现java.lang.IllegalArgumentException:'Content-Type' cannot contain wildcardt *异常
+		List<MediaType> supportedMediaTypes = new ArrayList<>();
+		supportedMediaTypes.add(MediaType.APPLICATION_JSON);
+		supportedMediaTypes.add(MediaType.APPLICATION_JSON_UTF8);
+		supportedMediaTypes.add(MediaType.APPLICATION_ATOM_XML);
+		supportedMediaTypes.add(MediaType.APPLICATION_FORM_URLENCODED);
+		supportedMediaTypes.add(MediaType.APPLICATION_OCTET_STREAM);
+		supportedMediaTypes.add(MediaType.APPLICATION_PDF);
+		supportedMediaTypes.add(MediaType.APPLICATION_RSS_XML);
+		supportedMediaTypes.add(MediaType.APPLICATION_XHTML_XML);
+		supportedMediaTypes.add(MediaType.APPLICATION_XML);
+		supportedMediaTypes.add(MediaType.IMAGE_GIF);
+		supportedMediaTypes.add(MediaType.IMAGE_JPEG);
+		supportedMediaTypes.add(MediaType.IMAGE_PNG);
+		supportedMediaTypes.add(MediaType.TEXT_EVENT_STREAM);
+		supportedMediaTypes.add(MediaType.TEXT_HTML);
+		supportedMediaTypes.add(MediaType.TEXT_MARKDOWN);
+		supportedMediaTypes.add(MediaType.TEXT_PLAIN);
+		supportedMediaTypes.add(MediaType.TEXT_XML);
+		fastConverter.setSupportedMediaTypes(supportedMediaTypes);
+
+		FastJsonConfig fastJsonConfig = new FastJsonConfig();
+		fastJsonConfig.setSerializerFeatures(SerializerFeature.PrettyFormat);
+		fastConverter.setFastJsonConfig(fastJsonConfig);
+		HttpMessageConverter<?> converter = fastConverter;
+		return new HttpMessageConverters(converter);
+	}
+
+
+
+

@@ -1,0 +1,448 @@
+{
+  "uuid": "27971ae6-ae22-45e6-9222-8dda9d9308bf",
+  "last_modified": 1499949447033,
+  "version": "1.6.0",
+  "name": "cube_001",
+  "model_name": "test_model",
+  "description": "",
+  "null_string": null,
+  "dimensions": [
+    {
+      "name": "PK_COL",
+      "table": "DEFAULT.HIVE_T_HK_GW",
+      "column": null,
+      "derived": [
+        "PK_COL"
+      ]
+    },
+    {
+      "name": "COL_LABLE",
+      "table": "DEFAULT.HIVE_T_HK_GW",
+      "column": null,
+      "derived": [
+        "COL_LABLE"
+      ]
+    },
+    {
+      "name": "DEPT_CODE_0",
+      "table": "DEFAULT.HIVE_T_HK_DEPT",
+      "column": null,
+      "derived": [
+        "DEPT_CODE_0"
+      ]
+    },
+    {
+      "name": "DEPT_CODE_1",
+      "table": "DEFAULT.HIVE_T_HK_DEPT",
+      "column": null,
+      "derived": [
+        "DEPT_CODE_1"
+      ]
+    },
+    {
+      "name": "DEPT_CODE_2",
+      "table": "DEFAULT.HIVE_T_HK_DEPT",
+      "column": null,
+      "derived": [
+        "DEPT_CODE_2"
+      ]
+    },
+    {
+      "name": "DEPT_CODE_3",
+      "table": "DEFAULT.HIVE_T_HK_DEPT",
+      "column": null,
+      "derived": [
+        "DEPT_CODE_3"
+      ]
+    },
+    {
+      "name": "DEPT_CODE_4",
+      "table": "DEFAULT.HIVE_T_HK_DEPT",
+      "column": null,
+      "derived": [
+        "DEPT_CODE_4"
+      ]
+    },
+    {
+      "name": "DEPT_CODE_5",
+      "table": "DEFAULT.HIVE_T_HK_DEPT",
+      "column": null,
+      "derived": [
+        "DEPT_CODE_5"
+      ]
+    },
+    {
+      "name": "DEPT_CODE_6",
+      "table": "DEFAULT.HIVE_T_HK_DEPT",
+      "column": null,
+      "derived": [
+        "DEPT_CODE_6"
+      ]
+    },
+    {
+      "name": "DEPT_CODE_7",
+      "table": "DEFAULT.HIVE_T_HK_DEPT",
+      "column": null,
+      "derived": [
+        "DEPT_CODE_7"
+      ]
+    },
+    {
+      "name": "DEPT_CODE_8",
+      "table": "DEFAULT.HIVE_T_HK_DEPT",
+      "column": null,
+      "derived": [
+        "DEPT_CODE_8"
+      ]
+    },
+    {
+      "name": "PK_COL",
+      "table": "DEFAULT.HIVE_T_HK_EMPLOY",
+      "column": null,
+      "derived": [
+        "PK_COL"
+      ]
+    },
+    {
+      "name": "YEAR_BEG_DT",
+      "table": "DEFAULT.KYLIN_CAL_DT",
+      "column": null,
+      "derived": [
+        "YEAR_BEG_DT"
+      ]
+    },
+    {
+      "name": "QTR_BEG_DT",
+      "table": "DEFAULT.KYLIN_CAL_DT",
+      "column": null,
+      "derived": [
+        "QTR_BEG_DT"
+      ]
+    },
+    {
+      "name": "MONTH_BEG_DT",
+      "table": "DEFAULT.KYLIN_CAL_DT",
+      "column": null,
+      "derived": [
+        "MONTH_BEG_DT"
+      ]
+    },
+    {
+      "name": "WEEK_BEG_DT",
+      "table": "DEFAULT.KYLIN_CAL_DT",
+      "column": null,
+      "derived": [
+        "WEEK_BEG_DT"
+      ]
+    },
+    {
+      "name": "CUSTOM_TRET_ID_0",
+      "table": "DEFAULT.HIVE_T_HK_CUSTOM",
+      "column": null,
+      "derived": [
+        "CUSTOM_TRET_ID_0"
+      ]
+    },
+    {
+      "name": "CUSTOM_TRET_ID_1",
+      "table": "DEFAULT.HIVE_T_HK_CUSTOM",
+      "column": null,
+      "derived": [
+        "CUSTOM_TRET_ID_1"
+      ]
+    },
+    {
+      "name": "CUSTOM_TRET_ID_2",
+      "table": "DEFAULT.HIVE_T_HK_CUSTOM",
+      "column": null,
+      "derived": [
+        "CUSTOM_TRET_ID_2"
+      ]
+    },
+    {
+      "name": "CUSTOM_TRET_ID_3",
+      "table": "DEFAULT.HIVE_T_HK_CUSTOM",
+      "column": null,
+      "derived": [
+        "CUSTOM_TRET_ID_3"
+      ]
+    },
+    {
+      "name": "CUSTOM_TRET_ID_4",
+      "table": "DEFAULT.HIVE_T_HK_CUSTOM",
+      "column": null,
+      "derived": [
+        "CUSTOM_TRET_ID_4"
+      ]
+    },
+    {
+      "name": "CUSTOM_TRET_ID_5",
+      "table": "DEFAULT.HIVE_T_HK_CUSTOM",
+      "column": null,
+      "derived": [
+        "CUSTOM_TRET_ID_5"
+      ]
+    },
+    {
+      "name": "STORE_TRET_ID_0",
+      "table": "DEFAULT.HIVE_T_HK_STORE",
+      "column": null,
+      "derived": [
+        "STORE_TRET_ID_0"
+      ]
+    },
+    {
+      "name": "STORE_TRET_ID_1",
+      "table": "DEFAULT.HIVE_T_HK_STORE",
+      "column": null,
+      "derived": [
+        "STORE_TRET_ID_1"
+      ]
+    },
+    {
+      "name": "STORE_TRET_ID_2",
+      "table": "DEFAULT.HIVE_T_HK_STORE",
+      "column": null,
+      "derived": [
+        "STORE_TRET_ID_2"
+      ]
+    },
+    {
+      "name": "STORE_TRET_ID_3",
+      "table": "DEFAULT.HIVE_T_HK_STORE",
+      "column": null,
+      "derived": [
+        "STORE_TRET_ID_3"
+      ]
+    },
+    {
+      "name": "STORE_TRET_ID_4",
+      "table": "DEFAULT.HIVE_T_HK_STORE",
+      "column": null,
+      "derived": [
+        "STORE_TRET_ID_4"
+      ]
+    },
+    {
+      "name": "STORE_TRET_ID_5",
+      "table": "DEFAULT.HIVE_T_HK_STORE",
+      "column": null,
+      "derived": [
+        "STORE_TRET_ID_5"
+      ]
+    },
+    {
+      "name": "STORE_TRET_ID_6",
+      "table": "DEFAULT.HIVE_T_HK_STORE",
+      "column": null,
+      "derived": [
+        "STORE_TRET_ID_6"
+      ]
+    },
+    {
+      "name": "STORE_TRET_ID_7",
+      "table": "DEFAULT.HIVE_T_HK_STORE",
+      "column": null,
+      "derived": [
+        "STORE_TRET_ID_7"
+      ]
+    },
+    {
+      "name": "STORE_TRET_ID_8",
+      "table": "DEFAULT.HIVE_T_HK_STORE",
+      "column": null,
+      "derived": [
+        "STORE_TRET_ID_8"
+      ]
+    },
+    {
+      "name": "PROD_TRET_ID_0",
+      "table": "DEFAULT.HIVE_T_HK_PROD",
+      "column": null,
+      "derived": [
+        "PROD_TRET_ID_0"
+      ]
+    },
+    {
+      "name": "PROD_TRET_ID_1",
+      "table": "DEFAULT.HIVE_T_HK_PROD",
+      "column": null,
+      "derived": [
+        "PROD_TRET_ID_1"
+      ]
+    },
+    {
+      "name": "PROD_TRET_ID_2",
+      "table": "DEFAULT.HIVE_T_HK_PROD",
+      "column": null,
+      "derived": [
+        "PROD_TRET_ID_2"
+      ]
+    },
+    {
+      "name": "PROD_TRET_ID_3",
+      "table": "DEFAULT.HIVE_T_HK_PROD",
+      "column": null,
+      "derived": [
+        "PROD_TRET_ID_3"
+      ]
+    },
+    {
+      "name": "PROD_TRET_ID_4",
+      "table": "DEFAULT.HIVE_T_HK_PROD",
+      "column": null,
+      "derived": [
+        "PROD_TRET_ID_4"
+      ]
+    },
+    {
+      "name": "PROD_TRET_ID_5",
+      "table": "DEFAULT.HIVE_T_HK_PROD",
+      "column": null,
+      "derived": [
+        "PROD_TRET_ID_5"
+      ]
+    }
+  ],
+  "measures": [
+    {
+      "name": "_COUNT_",
+      "function": {
+        "expression": "COUNT",
+        "parameter": {
+          "type": "constant",
+          "value": "1",
+          "next_parameter": null
+        },
+        "returntype": "bigint"
+      },
+      "dependent_measure_ref": null
+    },
+    {
+      "name": "SUM",
+      "function": {
+        "expression": "SUM",
+        "parameter": {
+          "type": "column",
+          "value": "SALES_VALUE",
+          "next_parameter": null
+        },
+        "returntype": "decimal"
+      },
+      "dependent_measure_ref": null
+    },
+    {
+      "name": "MIN",
+      "function": {
+        "expression": "MIN",
+        "parameter": {
+          "type": "column",
+          "value": "SALES_VALUE",
+          "next_parameter": null
+        },
+        "returntype": "double"
+      },
+      "dependent_measure_ref": null
+    },
+    {
+      "name": "MAX",
+      "function": {
+        "expression": "MAX",
+        "parameter": {
+          "type": "column",
+          "value": "SALES_VALUE",
+          "next_parameter": null
+        },
+        "returntype": "double"
+      },
+      "dependent_measure_ref": null
+    }
+  ],
+  "dictionaries": [],
+  "rowkey": {
+    "rowkey_columns": [
+      {
+        "column": "FK_GW",
+        "encoding": "dict",
+        "isShardBy": false
+      },
+      {
+        "column": "FK_DEPT",
+        "encoding": "dict",
+        "isShardBy": false
+      },
+      {
+        "column": "FK_EMPLOY",
+        "encoding": "dict",
+        "isShardBy": false
+      },
+      {
+        "column": "SALES_TIME",
+        "encoding": "date",
+        "isShardBy": false
+      },
+      {
+        "column": "FK_CUSTOM",
+        "encoding": "dict",
+        "isShardBy": false
+      },
+      {
+        "column": "FK_STORE",
+        "encoding": "dict",
+        "isShardBy": false
+      }
+    ]
+  },
+  "hbase_mapping": {
+    "column_family": [
+      {
+        "name": "F1",
+        "columns": [
+          {
+            "qualifier": "M",
+            "measure_refs": [
+              "_COUNT_",
+              "SUM",
+              "MIN",
+              "MAX"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "aggregation_groups": [
+    {
+      "includes": [
+        "FK_GW",
+        "FK_DEPT",
+        "FK_EMPLOY",
+        "SALES_TIME",
+        "FK_CUSTOM",
+        "FK_STORE"
+      ],
+      "select_rule": {
+        "hierarchy_dims": [],
+        "mandatory_dims": [],
+        "joint_dims": []
+      }
+    }
+  ],
+  "signature": "NM3yA1Z0DvS+FSWsc7ck8w==",
+  "notify_list": [],
+  "status_need_notify": [
+    "ERROR",
+    "DISCARDED",
+    "SUCCEED"
+  ],
+  "partition_date_start": 1296518400000,
+  "partition_date_end": 3153600000000,
+  "auto_merge_time_ranges": [
+    604800000,
+    2419200000
+  ],
+  "retention_range": 0,
+  "engine_type": 2,
+  "storage_type": 2,
+  "override_kylin_properties": {}
+}

@@ -1,0 +1,116 @@
+服务生产者将服务注册到Eureka服务中心，并提供服务名称spring.application.name=compute-service
+
+
+服务消费者，利用Feign做客户端负载均衡，也将自己注册到Eureka服务中心。
+spring.application.name=Feign-Controller
+
+server.port=4000
+
+eureka.client.serviceUrl.defaultZone=http://localhost:1111/eureka/
+
+实例代码：
+
+1、boot应用开启Eureka和feign功能：
+@EnableDiscoveryClient
+@EnableFeignClients
+
+2、定义个客户端接口：
+接口名称可以随意，但是@FeignClient(value = "compute-service")使用Eureka注册的服务名称或者直接URL
+
+注意：
+	1、服务提供者可以有很多个controller提供REST API，消费者端可以写在一个接口中
+	2、如果服务提供者REST中的参数使用@RequestParam注解，则消费端接口参数必须也要使用@RequestParam("userName") ，同时提供value别名"userName"，否则出现异常。
+
+/**
+ * Created by liuwens on 2017/8/18.
+ */
+@FeignClient(value = "compute-service")
+public interface TestEurekaController
+{
+
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    String test(@RequestParam("param1") int param1, @RequestParam("param2") int param2);
+
+    @RequestMapping(value = "/user", method = RequestMethod.POST)
+    String addUserInfo(@RequestParam("userName") String userName, @RequestParam("age") int age);
+
+    /**
+     * post请求参数注解应该使用@RequestBody
+     * 实体类bean中的属性和json字段的转换需要设置
+     * @param userInfoDTO
+     * @return
+     */
+    @RequestMapping(value = "/user2", method = RequestMethod.POST)
+    UserInfoDTO addUserInfo2(@RequestBody UserInfoDTO userInfoDTO);
+}
+
+
+如果使用fastjson作为数据交换格式，则需要
+1、引入fastjson的依赖
+	<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.2.32</version>
+		</dependency>
+
+2、在Application启动类中加入
+	/**
+	 * 注入FastJson配置
+	 * @return
+	 */
+	@Bean
+	public HttpMessageConverters fastJsonHttpMessageConverters() {
+		FastJsonHttpMessageConverter fastConverter = new FastJsonHttpMessageConverter();
+		FastJsonConfig fastJsonConfig = new FastJsonConfig();
+		fastJsonConfig.setSerializerFeatures(SerializerFeature.PrettyFormat);
+		fastConverter.setFastJsonConfig(fastJsonConfig);
+
+		List<MediaType> mediaTypes = new ArrayList<>();
+		mediaTypes.add(MediaType.APPLICATION_JSON_UTF8);
+
+		/*
+		 * 由于json默认的mediaType是*/*, feign在做请求序列化时需要一种特定格式，则会导致异常，这里需要手动设置mediaType
+		 * exception: feign 'Content-Type' cannot contain wildcard type '*'
+		 * 设置的mediaType为：application/json;charset=UTF-8
+		 */
+		fastConverter.setSupportedMediaTypes(mediaTypes);
+
+		HttpMessageConverter<?> converter = fastConverter;
+		
+		return new HttpMessageConverters(converter);
+	}
+
+3、实际使用时，Post参数需要用@RequestBody，如果输入参数是bean，则可以在bean中设置json转换对象的方式。
+
+@RequestMapping(value = "/user2", method =RequestMethod.POST)
+    public UserInfoDTO saveUserInfo(@RequestBody UserInfoDTO userInfoDTO)
+    {
+        return testEurekaController.addUserInfo2(userInfoDTO);
+    }
+
+CTO Bean
+public class UserInfoDTO
+{
+    @JSONField(name = "user_name")
+    private String userName;
+
+    @JSONField(name = "user_age")
+    private int userAge;
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName=userName;
+    }
+
+    public int getUserAge() {
+        return userAge;
+    }
+
+    public void setUserAge(int userAge) {
+        this.userAge=userAge;
+    }
+}
+

@@ -1,0 +1,15 @@
+kill -9 `ps -ef|grep supervisor | awk '{print $2}'`
+
+
+kill -9 `ps -ef|grep nimbus | awk '{print $2}'`
+
+ 启动Storm Topology：
+
+storm jar allmycode.jar org.me.MyTopology arg1 arg2 arg3 
+其中，allmycode.jar是包含Topology实现代码的jar包，org.me.MyTopology的main方法是Topology的入口，arg1、arg2和arg3为org.me.MyTopology执行时需要传入的参数。
+
+
+停止Storm Topology：
+
+storm kill {toponame} 
+其中，{toponame}为Topology提交到Storm集群时指定的Topology任务名称。

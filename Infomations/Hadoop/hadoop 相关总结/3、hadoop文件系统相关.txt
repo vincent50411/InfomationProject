@@ -1,0 +1,52 @@
+Hadoop shell 官方文档 http://hadoop.apache.org/docs/r1.0.4/cn/hdfs_shell.html
+
+
+下面举几个使用shell的例子
+
+1. 添加本地文件到hdfs目录
+
+hadoop fs -put /home/hadoop/input hdfs://node1:9000/tmp
+
+实际案例：hdfs dfs -put /root/Documents/lws/hdfs_test/input hdfs://vm-centeros01.hkgp.net:8020/user/root/input
+
+上面命令的Hadoop fs -put 后面的第一个参数是本地路径，第二个参数是hadoop HDFS上的路径，意思就是将本地路径加载到HDFS上。
+
+将本地文件放到hdfs文件系统中： hdfs dfs -put 本地文件 hdfs://vm-centeros01.hkgp.net:8020/user/root/input(/user/root/input)
+
+
+2. 创建文件夹
+
+在hadoop的HDFS上创建文件夹和在she’ll上创建文件夹一样：
+
+hadoop fs -mkdir hdfs://node1:9000/tmp/input
+
+上面命令在HDFS的tmp目录下穿件了input文件夹
+
+删除文件夹
+
+每一次运行mapreduce程序之前，要确保output目录是不存在或者空的，那么，我们就要把文件夹删除掉，删除的方法如下：
+hadoop fs -rmr hdfs://node1:9000/tmp/output
+
+上面的命令就把output文件夹删除了，-rmr是一个递归删除操作，会删除该文件夹下面的所有文件以及文件夹。也可以选用-rm ,单个删除。
+
+===================查看hadoop job信息
+hadoop job -list
+
+hadoop job -status job_id
+
+
+
+=================== 清理hadoop文件系统 
+当前用户目录为 /user/root
+
+hadoop跟目录地址/
+hdfs dfs -ls /
+
+查看hadoop文件系统目录大小
+hdfs dfs -du -h /user/root   -h增加单位显示 目录结构列表明细大小
+
+hdfs dfs -dus -h /user/root 显示汇总目录大小
+
+
+hadoop文件系统通过rmr 或者rm删除目录或者文件后，不会直接从系统删除，会移动到 .Trash 目录，只有彻底清空.Trash目录，才会释放空间
+

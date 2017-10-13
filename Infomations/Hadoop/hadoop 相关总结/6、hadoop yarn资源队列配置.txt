@@ -1,0 +1,20 @@
+Yarn 调度器Scheduler详解
+
+Yarn是资源管理，分ResourceManage 和 ApplicationManager等
+
+Yarn 队列
+依赖hadoop集群的组件包括HBase、Hive、kylin、Oozie等，只要依赖yarn资源管理，都可以通过设置队列来达到资源的分配。
+
+需要在各自组件内的配置文件中增加队列的指定，如kylin需要在kylin_job_conf.xml中指定
+<property>
+    <name>mapreduce.job.queuename</name>
+    <value>...</value>
+    <description>the queue name</description>
+</property>
+
+Hive需要在(最新版本1.5.1同时需要在hive-site.xml 添加）
+
+队列可以设置父子关系，配置资源占比；组件默认不配置都使用default队列，这样会导致组件过多，资源争抢，而出现等待卡死状态。
+
+
+http://blog.csdn.net/suifeng3051/article/details/49508261

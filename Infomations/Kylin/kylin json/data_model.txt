@@ -1,0 +1,195 @@
+{
+  "uuid": "d428e518-2eb3-4f81-937c-62ceea18afa6",
+  "last_modified": 1499949363415,
+  "version": "1.6.0",
+  "name": "test_model",
+  "owner": "ADMIN",
+  "description": "",
+  "fact_table": "DEFAULT.HIVE_T_HK_SALES",
+  "lookups": [
+    {
+      "table": "DEFAULT.HIVE_T_HK_GW",
+      "join": {
+        "type": "inner",
+        "primary_key": [
+          "PK_COL"
+        ],
+        "foreign_key": [
+          "FK_GW"
+        ]
+      }
+    },
+    {
+      "table": "DEFAULT.HIVE_T_HK_DEPT",
+      "join": {
+        "type": "inner",
+        "primary_key": [
+          "PK_COL"
+        ],
+        "foreign_key": [
+          "FK_DEPT"
+        ]
+      }
+    },
+    {
+      "table": "DEFAULT.HIVE_T_HK_EMPLOY",
+      "join": {
+        "type": "inner",
+        "primary_key": [
+          "PK_COL"
+        ],
+        "foreign_key": [
+          "FK_EMPLOY"
+        ]
+      }
+    },
+    {
+      "table": "DEFAULT.KYLIN_CAL_DT",
+      "join": {
+        "type": "inner",
+        "primary_key": [
+          "CAL_DT"
+        ],
+        "foreign_key": [
+          "SALES_TIME"
+        ]
+      }
+    },
+    {
+      "table": "DEFAULT.HIVE_T_HK_CUSTOM",
+      "join": {
+        "type": "inner",
+        "primary_key": [
+          "PK_COL"
+        ],
+        "foreign_key": [
+          "FK_CUSTOM"
+        ]
+      }
+    },
+    {
+      "table": "DEFAULT.HIVE_T_HK_STORE",
+      "join": {
+        "type": "inner",
+        "primary_key": [
+          "PK_COL"
+        ],
+        "foreign_key": [
+          "FK_STORE"
+        ]
+      }
+    },
+    {
+      "table": "DEFAULT.HIVE_T_HK_PROD",
+      "join": {
+        "type": "inner",
+        "primary_key": [
+          "PK_COL"
+        ],
+        "foreign_key": [
+          "FK_STORE"
+        ]
+      }
+    }
+  ],
+  "dimensions": [
+    {
+      "table": "DEFAULT.HIVE_T_HK_SALES",
+      "columns": [
+        "FK_DEPT",
+        "FK_STORE",
+        "FK_PROD",
+        "FK_CUSTOM",
+        "FK_GW",
+        "FK_EMPLOY",
+        "SALES_TIME"
+      ]
+    },
+    {
+      "table": "DEFAULT.HIVE_T_HK_GW",
+      "columns": [
+        "PK_COL",
+        "COL_LABLE"
+      ]
+    },
+    {
+      "table": "DEFAULT.HIVE_T_HK_DEPT",
+      "columns": [
+        "DEPT_CODE_0",
+        "DEPT_CODE_1",
+        "DEPT_CODE_2",
+        "DEPT_CODE_3",
+        "DEPT_CODE_4",
+        "DEPT_CODE_5",
+        "DEPT_CODE_6",
+        "DEPT_CODE_7",
+        "DEPT_CODE_8"
+      ]
+    },
+    {
+      "table": "DEFAULT.HIVE_T_HK_EMPLOY",
+      "columns": [
+        "PK_COL"
+      ]
+    },
+    {
+      "table": "DEFAULT.KYLIN_CAL_DT",
+      "columns": [
+        "YEAR_BEG_DT",
+        "QTR_BEG_DT",
+        "MONTH_BEG_DT",
+        "WEEK_BEG_DT"
+      ]
+    },
+    {
+      "table": "DEFAULT.HIVE_T_HK_CUSTOM",
+      "columns": [
+        "CUSTOM_TRET_ID_0",
+        "CUSTOM_TRET_ID_1",
+        "CUSTOM_TRET_ID_2",
+        "CUSTOM_TRET_ID_3",
+        "CUSTOM_TRET_ID_4",
+        "CUSTOM_TRET_ID_5"
+      ]
+    },
+    {
+      "table": "DEFAULT.HIVE_T_HK_STORE",
+      "columns": [
+        "STORE_TRET_ID_0",
+        "STORE_TRET_ID_1",
+        "STORE_TRET_ID_2",
+        "STORE_TRET_ID_3",
+        "STORE_TRET_ID_4",
+        "STORE_TRET_ID_5",
+        "STORE_TRET_ID_6",
+        "STORE_TRET_ID_7",
+        "STORE_TRET_ID_8"
+      ]
+    },
+    {
+      "table": "DEFAULT.HIVE_T_HK_PROD",
+      "columns": [
+        "PROD_TRET_ID_0",
+        "PROD_TRET_ID_1",
+        "PROD_TRET_ID_2",
+        "PROD_TRET_ID_3",
+        "PROD_TRET_ID_5",
+        "PROD_TRET_ID_4"
+      ]
+    }
+  ],
+  "metrics": [
+    "SALES_VALUE"
+  ],
+  "filter_condition": "",
+  "partition_desc": {
+    "partition_date_column": "DEFAULT.HIVE_T_HK_SALES.SALES_TIME",
+    "partition_time_column": null,
+    "partition_date_start": 0,
+    "partition_date_format": "yyyy-MM-dd",
+    "partition_time_format": "HH:mm:ss",
+    "partition_type": "APPEND",
+    "partition_condition_builder": "org.apache.kylin.metadata.model.PartitionDesc$DefaultPartitionConditionBuilder"
+  },
+  "capacity": "MEDIUM"
+}

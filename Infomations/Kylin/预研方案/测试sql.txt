@@ -1,0 +1,104 @@
+
+事实表hive_t_hk_sales数据量40w
+
+部门维度表hive_t_hk_dept数量量：2248
+产品维度表hive_t_hk_prod数据量：69683
+仓库维度表hive_t_hk_store数据量：595
+客户维度表hive_t_hk_custom数据量：3001
+岗位维度表hive_t_hk_gw数量：300
+职员维度表hive_t_hk_employ数量：380
+周期维度表kylin_cal_dt数据量：731
+
+
+一级部门每年度的销售额统计
+select c.year_beg_dt, b.dept_code_0,  sum(a.sales_value) from hive_t_hk_sales a join hive_t_hk_dept b on a.fk_dept = b.pk_col join kylin_cal_dt c on a.sales_time = c.cal_dt group by b.dept_code_0, c.year_beg_dt;
+
+hive查询结果：
+hive> select c.year_beg_dt, b.dept_code_1, sum(a.sales_value) sum_value from hive_t_hk_sales a join hive_t_hk_dept b on a.fk_dept = b.pk_col join kylin_cal_dt c on a.sales_time = c.cal_dt 
+    > where b.dept_code_1 is not null
+    > group by c.year_beg_dt, b.dept_code_1;
+Query ID = root_20170712173614_36f33f91-ea17-4ad7-85cb-575617b327d6
+Total jobs = 1
+Launching Job 1 out of 1
+Tez session was closed. Reopening...
+Session re-established.
+Status: Running (Executing on YARN cluster with App id application_1499843673659_0050)
+
+--------------------------------------------------------------------------------
+        VERTICES      STATUS  TOTAL  COMPLETED  RUNNING  PENDING  FAILED  KILLED
+--------------------------------------------------------------------------------
+Map 1 ..........   SUCCEEDED      2          2        0        0       0       0
+Map 2 ..........   SUCCEEDED      1          1        0        0       0       0
+Map 3 ..........   SUCCEEDED      1          1        0        0       0       0
+Reducer 4 ......   SUCCEEDED      1          1        0        0       0       0
+--------------------------------------------------------------------------------
+VERTICES: 04/04  [==========================>>] 100%  ELAPSED TIME: 13.35 s    
+--------------------------------------------------------------------------------
+OK
+2013-01-01	011024	2.2008732648000008E8
+2013-01-01	012213	2436646.009999999
+2013-01-01	012333	694202.3800000001
+2013-01-01	015921	6300077.189999998
+2013-01-01	D001539	78677.66
+2013-01-01	D001587	99341.82999999999
+2014-01-01	011024	1882124.0999999996
+2014-01-01	012213	16663.38
+2014-01-01	015921	43319.55
+2014-01-01	D001587	7647.55
+Time taken: 20.409 seconds, Fetched: 10 row(s)
+
+
+Kylin 查询结果
+==========================[QUERY]===============================
+Query Id: 45608dca-1543-4fa3-8c48-39d21da91c78
+SQL: select c.year_beg_dt, b.dept_code_1, sum(a.sales_value) sum_value from hive_t_hk_sales a join hive_t_hk_dept b on a.fk_dept = b.pk_col join kylin_cal_dt c on a.sales_time = c.cal_dt  
+where b.dept_code_1 is not null and c.year_beg_dt is not null 
+group by c.year_beg_dt, b.dept_code_1
+LIMIT 50000
+User: ADMIN
+Success: true
+Duration: 1.93
+Project: hk_project_001
+Realization Names: [hk_sales_cube]
+Cuboid Ids: [65]
+Total scan count: 373235
+Result row count: 10
+Accept Partial: true
+Is Partial Result: false
+Hit Exception Cache: false
+Storage cache used: false
+Message: null
+==========================[QUERY]===============================
+
+
+
+select c.year_beg_dt, b.dept_code_1, prod.tret_id_0, e.pk_col, s.tret_id_0, custom.tret_id_0, sum(a.sales_value) sum_value from hive_t_hk_sales a 
+join hive_t_hk_dept b on a.fk_dept = b.pk_col 
+join kylin_cal_dt c on a.sales_time = c.cal_dt 
+join hive_t_hk_prod prod on a.fk_prod = prod.pk_col
+join hive_t_hk_employ e on a.fk_employ = e.pk_col
+join hive_t_hk_store s on a.fk_store = s.pk_col
+join hive_t_hk_custom custom on a.fk_custom = custom.pk_col
+where b.dept_code_1 is not null and c.year_beg_dt is not null
+and prod.tret_id_0 is not null
+group by c.year_beg_dt, b.dept_code_0, b.dept_code_1, prod.tret_id_0, e.pk_col, s.tret_id_0, custom.tret_id_0 
+order by c.year_beg_dt asc
+
+
+SELECT COUNT(SALES_VALUE) FROM HIVE_T_HK_SALES A 
+JOIN KYLIN_CAL_DT D ON A.SALES_TIME = D.CAL_DT 
+JOIN HIVE_T_HK_DEPT P ON A.FK_DEPT = P.PK_COL
+GROUP BY D.YEAR_BEG_DT, P.DEPT_CODE_0 
+
+
+
+KYLIN_5HKHK35LPL                                                                                                                                                                                                                                                              
+'KYLIN_5LK9H43TPT'                                                                                                                                                                                                                                                            
+'KYLIN_8NGBS1WYR9'                                                                                                                                                                                                                                                              
+'KYLIN_SFRXZIXLKE'                                                                                                                                                                                                                                                              
+'KYLIN_YZ2YOGXNER'
+
+
+
+
+

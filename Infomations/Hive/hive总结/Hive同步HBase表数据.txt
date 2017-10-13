@@ -1,0 +1,113 @@
+HBase表数据同步到Hive中
+hbase.columns.mapping指向对应的列族；多列时，data:1，data:2（data是列族名称，1、2是列名称）；多列族时，data1:1, data1:2, data2:1（data1是列族名称，1、2是列名称）；
+ hbase.table.name指向对应的表；
+ hbase_table_2(key string, value string)，这个是关联表, key是hbase表中的rowkey
+
+
+CREATE EXTERNAL TABLE hbase_table_2(key string, address_city string, address_country string, address_provice string, info_age string, info_birthday string, info_company string)   
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'   
+WITH SERDEPROPERTIES ("hbase.columns.mapping" = "address:city, address:country, address:provice, info:age, info:birthday, info:company")   
+TBLPROPERTIES("hbase.table.name" = "member_test"); 
+
+
+部门维度表
+drop table hive_t_hk_dept;
+CREATE EXTERNAL TABLE hive_t_hk_dept 
+(key string, pk_col string, dept_code_0 string, dept_name_0 string, dept_code_1 string, dept_name_1 string, dept_code_2 string, dept_name_2 string, dept_code_3 string, dept_name_3 string, 
+dept_code_4 string, dept_name_4 string, dept_code_5 string, dept_name_5 string, dept_code_6 string, dept_name_6 string, dept_code_7 string, dept_name_7 string, dept_code_8 string, dept_name_8 string)   
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'   
+WITH SERDEPROPERTIES ("hbase.columns.mapping" = "cf:pk_col, cf:dept_code_0, cf:dept_name_0, cf:dept_code_1, cf:dept_name_1, cf:dept_code_2, cf:dept_name_2, cf:dept_code_3, cf:dept_name_3,
+cf:dept_code_4, cf:dept_name_4, cf:dept_code_5, cf:dept_name_5, cf:dept_code_6, cf:dept_name_6, cf:dept_code_7, cf:dept_name_7, cf:dept_code_8, cf:dept_name_8")   
+TBLPROPERTIES("hbase.table.name" = "t_hk_dept"); 
+
+仓库维度表
+drop table hive_t_hk_store;
+CREATE EXTERNAL TABLE hive_t_hk_store
+(key string, pk_col string, store_tret_id_0 string, store_tret_id_1 string, store_tret_id_2 string,store_tret_id_3 string, 
+store_tret_id_4 string, store_tret_id_5 string, store_tret_id_6 string, store_tret_id_7 string, store_tret_id_8 string)   
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'   
+WITH SERDEPROPERTIES ("hbase.columns.mapping" = "cf:pk_col, cf:store_tret_id_0, cf:store_tret_id_1, cf:store_tret_id_2, cf:store_tret_id_3,
+cf:store_tret_id_4, cf:store_tret_id_5, cf:store_tret_id_6, cf:store_tret_id_7, cf:store_tret_id_8")   
+TBLPROPERTIES("hbase.table.name" = "t_hk_store"); 
+
+产品维度表
+drop table hive_t_hk_prod;
+CREATE EXTERNAL TABLE hive_t_hk_prod
+(key string, pk_col string, prod_tret_id_0 string, prod_tret_id_1 string, prod_tret_id_2 string, prod_tret_id_3 string, 
+prod_tret_id_4 string, prod_tret_id_5 string)   
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'   
+WITH SERDEPROPERTIES ("hbase.columns.mapping" = "cf:pk_col, cf:prod_tret_id_0, cf:prod_tret_id_1, cf:prod_tret_id_2, cf:prod_tret_id_3,
+cf:prod_tret_id_4, cf:prod_tret_id_5")   
+TBLPROPERTIES("hbase.table.name" = "t_hk_prod"); 
+
+客户维度表
+drop table hive_t_hk_custom;
+CREATE EXTERNAL TABLE hive_t_hk_custom
+(key string, pk_col string, custom_tret_id_0 string, custom_tret_id_1 string, custom_tret_id_2 string, custom_tret_id_3 string, 
+custom_tret_id_4 string, custom_tret_id_5 string)   
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'   
+WITH SERDEPROPERTIES ("hbase.columns.mapping" = "cf:pk_col, cf:custom_tret_id_0, cf:custom_tret_id_1, cf:custom_tret_id_2, cf:custom_tret_id_3,
+cf:custom_tret_id_4, cf:custom_tret_id_5")   
+TBLPROPERTIES("hbase.table.name" = "t_hk_custom"); 
+
+岗位维度表
+drop table hive_t_hk_gw;
+CREATE EXTERNAL TABLE hive_t_hk_gw(key string, pk_col string, COL_LABLE string, col_label_0 string)   
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'   
+WITH SERDEPROPERTIES ("hbase.columns.mapping" = "cf:pk_col, cf:COL_LABLE, cf:col_label_0")   
+TBLPROPERTIES("hbase.table.name" = "t_hk_gw"); 
+
+职员维度表
+drop table hive_t_hk_employ;
+CREATE EXTERNAL TABLE hive_t_hk_employ(key string, pk_col string, COL_LABLE string, col_label_0 string)   
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'   
+WITH SERDEPROPERTIES ("hbase.columns.mapping" = "cf:pk_col, cf:COL_LABLE, cf:col_label_0")   
+TBLPROPERTIES("hbase.table.name" = "t_hk_employ"); 
+
+
+销售额事实表
+drop table hive_t_hk_sales;
+CREATE EXTERNAL TABLE hive_t_hk_sales(key string, fk_dept string, fk_store string, fk_prod string, fk_custom string, fk_gw string, fk_employ string, sales_value double, sales_time date)   
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'   
+WITH SERDEPROPERTIES ("hbase.columns.mapping" = "cf:fk_dept, cf:fk_store, cf:fk_prod, cf:fk_custom, cf:fk_gw,  cf:fk_employ, cf:sales_value, cf:sale_time")   
+TBLPROPERTIES("hbase.table.name" = "t_hk_sales"); 
+
+
+
+测试用的维度表
+drop table SCEO_DIM_6f920e5366e211e7b2e4005056bc4879_depttree;
+CREATE EXTERNAL TABLE SCEO_DIM_6f920e5366e211e7b2e4005056bc4879_depttree_test
+(key string, 6f920e5366e211e7b2e4005056bc4879_PK string, DIM_6f920e5366e211e7b2e4005056bc4879_0 string, DIM_6f920e5366e211e7b2e4005056bc4879_1 string, 
+DIM_6f920e5366e211e7b2e4005056bc4879_2 string, DIM_6f920e5366e211e7b2e4005056bc4879_3 string)   
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'   
+WITH SERDEPROPERTIES ("hbase.columns.mapping" = "cf:pk_col, cf:custom_tret_id_0, cf:custom_tret_id_1, cf:custom_tret_id_2, cf:custom_tret_id_3")   
+TBLPROPERTIES("hbase.table.name" = "sceo_dimesion_depttree"); 
+
+测试用的事实表
+drop table SCEO_FACT_6f920e5366e211e7b2e4005056bc4879_9b1dcaab81fa4079870c23144360e5d7;
+CREATE EXTERNAL TABLE SCEO_FACT_6f920e5366e211e7b2e4005056bc4879_9b1dcaab81fa4079870c23144360e5d7(key string, 6f920e5366e211e7b2e4005056bc4879_FK string, 
+9b1dcaab81fa4079870c23144360e5d7 double, SERVICE_TIME date, CYCLE_TIME_ID string)   
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'   
+WITH SERDEPROPERTIES ("hbase.columns.mapping" = "cf:fk_custom, cf:sales_value, cf:sale_time, cf:cycle_time")   
+TBLPROPERTIES("hbase.table.name" = "sceo_fact_sales"); 
+
+
+{"edpg_edmc_id":"6f920e5366e211e7b2e4005056bc4879","edpg_edmp_id":"9b1dcaab81fa4079870c23144360e5d7"}
+
+
+cycle_time fiscal_year
+
+
+EDM监管类返回结果
+ {"errMsg":null,"retCode":1,"data":[
+ {"edmcNameEn":"customertree","tableName":"cttr_moni015a"},
+ {"edmcNameEn":"facility","tableName":"faci_moni015a"},
+ {"edmcNameEn":"depttree","tableName":"detr_moni015a"}]}
+
+ drop table SCEO_DIM_S0001_depttree;
+CREATE EXTERNAL TABLE SCEO_DIM_S0001_depttree
+(key string, S0001_PK string, DIM_S0001_0 string, DIM_S0001_1 string, DIM_S0001_2 string, DIM_S0001_3 string)   
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'   
+WITH SERDEPROPERTIES ("hbase.columns.mapping" = "cf:pk_col, cf:custom_tret_id_0, cf:custom_tret_id_1, cf:custom_tret_id_2, cf:custom_tret_id_3")   
+TBLPROPERTIES("hbase.table.name" = "t_hk_custom"); 
+

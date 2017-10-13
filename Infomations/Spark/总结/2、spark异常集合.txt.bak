@@ -1,0 +1,7 @@
+
+10、java.lang.IllegalArgumentException: requirement failed: No output operations registered, so nothing to execute
+解决方法：tranformation最后一步产生的那个RDD必须有相应Action操作，例如massages.print()等
+
+messagesStream.map(message => (message.key(), message.value())); //异常
+messagesStream.map(message => (message.key(), message.value())).print();//正确
+

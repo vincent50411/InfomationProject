@@ -1,0 +1,81 @@
+
+http://wiki.jikexueyuan.com/project/spring/annotation-based-configuration/spring-qualifier-annotation.html
+
+
+Spring boot 配置文件注入方式总结:
+
+
+1 @Value(“${xxx}”)
+test.className=sdfsdfsdfsdfsdf
+
+@Value("${test.className}") 
+    private String className;
+//增加getter方法
+
+====================== @Value 的两种使用方式，1直接从property读取${properties : default_value }; 2根据spEL表达式引用其他bean调用属性#{anotherBean.userName? : default_value} spEL学习地址http://www.cnblogs.com/moonlightpoet/p/5541010.html ====================
+结论
+
+@Value的值有两类：
+
+① ${ property : default_value }
+
+② #{ obj.property? : default_value }
+
+就是说，第一个注入的是外部参数对应的property，第二个则是SpEL表达式对应的内容。
+
+那个 default_value，就是前面的值为空时的默认值。注意二者的不同。
+@Value("${test.className}")
+    private String className;
+
+    @Value("#{testBean.getTestName()}")
+    private String otherName;
+====================================================================================================================================
+
+2 @ConfigurationProperties(prefix= "", ignoreUnknownFields = false)// ignoreUnknownFields = false如果匹配不到抛出异常，方便开发调试
+
+
+属性名匹配规则
+
+例如有如下配置对象：
+
+@Component
+@ConfigurationProperties(prefix="person")
+public class ConnectionSettings {
+
+    private String firstName;  //配置文件中可以是 person.firstName    或者 person.first-name; 不能是person.firstname，会提示无法匹配
+
+}
+ 
+firstName可以使用的属性名如下：
+
+person.firstName，标准的驼峰式命名
+person.first-name，虚线（-）分割方式，推荐在.properties和.yml配置文件中使用
+PERSON_FIRST_NAME，大写下划线形式，建议在系统环境变量中使用
+
+
+二、注解分为两类：
+
+1、一类是使用Bean，即是把已经在xml文件中配置好的Bean拿来用，完成属性、方法的组装；比如@Autowired , @Resource，可以通过byTYPE（@Autowired）、byNAME（@Resource）的方式获取Bean；
+
+ 
+
+2、一类是注册Bean,@Component , @Repository , @ Controller , @Service , @Configration这些注解都是把你要实例化的对象转化成一个Bean，放在IoC容器中，等你要用的时候，它会和上面的@Autowired , @Resource配合到一起，把对象、属性、方法完美组装。
+
+
+
+意思是@Bean明确地指示了一种方法，什么方法呢——产生一个bean的方法，并且交给Spring容器管理；
+从这我们就明白了为啥@Bean是放在方法的注释上了，因为它很明确地告诉被注释的方法，
+你给我产生一个Bean，然后交给Spring容器，剩下的你就别管了
+
+
+
+1、凡是子类及带属性、方法的类都注册Bean到Spring中，交给它管理；
+
+2、@Bean 用在方法上，告诉Spring容器，你可以从下面这个方法中拿到一个Bean
+
+
+
+
+
+
+

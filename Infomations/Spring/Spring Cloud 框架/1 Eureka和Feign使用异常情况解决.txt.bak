@@ -1,0 +1,13 @@
+在Spring Boot环境中使用Eureka和Feign时，在yml配置文件中增加了 
+server:
+  address: 10.3.99.36
+  port: 8066
+  配置后，启动服务，提示以下异常情况。原因是使用了注册中心，不能配置这些。一般是由注册中心到Git上拉取配置信息，然后覆盖本地。
+
+可以单独配置访问端口。address不能配置
+
+
+org.springframework.beans.factory.BeanCreationNotAllowedException: Error creating bean with name 'eurekaAutoServiceRegistration': 
+Singleton bean creation not allowed while singletons of this factory are in destruction (Do not request a bean from a BeanFactory in a destroy method implementation!)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:216) [spring-beans-4.3.11.RELEASE.jar:4.3.11.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:302) ~[spring-beans-4.3.11.RELEASE.jar:4.3.11.RELEASE]

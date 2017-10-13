@@ -1,0 +1,78 @@
+http://blog.csdn.net/neosmith/article/details/52449921
+
+1、使用Feign需要引入eureka依赖和feign依赖
+2、在Application中加入相关注解：
+@EnableDiscoveryClient
+@EnableFeignClients
+
+3、创建服务接口，并增加feign注解，只需要指定eureka上注册的服务名称，不需要指定具体url。已经实现了Ribbon负载
+@FeignClient("SERVICECENTER-PROVIDER")
+public interface ORMFeignService
+{
+    @RequestMapping(value = "/servicecenter/add", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    String ormAddService(String jsonParam);
+}
+
+4、application.properties（yml）配置文件中增加eureka注册服务地址：
+eureka.client.serviceUrl.defaultZone=http://10.3.98.153:1111/eureka/
+
+================================================================================================================================
+Feign中接口参数的设置，多参数的设置
+
+如果是GET请求，
+(1) 方法一
+@FeignClient(name = "microservice-provider-user")
+public interface UserFeignClient {
+  @RequestMapping(value = "/get", method = RequestMethod.GET)
+  public User get1(@RequestParam("id") Long id, @RequestParam("username") String username);
+}
+这是最为直观的方式，URL有几个参数，Feign接口中的方法就有几个参数。使用@RequestParam注解指定请求的参数是什么。会自动将参数增加到URL之后，？后之后
+
+(2) 方法二
+
+@FeignClient(name = "microservice-provider-user")
+public interface UserFeignClient {
+  @RequestMapping(value = "/get", method = RequestMethod.GET)
+  public User get2(@RequestParam Map<String, Object> map);
+}
+多参数的URL也可以使用Map去构建。当目标URL参数非常多的时候，可使用这种方式简化Feign接口的编写。
+
+POST请求包含多个参数
+
+下面我们来讨论如何使用Feign构造包含多个参数的POST请求。举个例子，假设我们的用户微服务的Controller是这样编写的：
+
+@RestController
+public class UserController {
+  @PostMapping("/post")
+  public User post(@RequestBody User user) {
+    ...
+  }
+}
+我们的Feign接口要如何编写呢？答案非常简单，示例：
+
+@FeignClient(name = "microservice-provider-user")
+public interface UserFeignClient {
+  @RequestMapping(value = "/post", method = RequestMethod.POST)
+  public User post(@RequestBody User user);
+}
+
+================================================================================================================================
+
+Feign的HTTP Client， 可以替换
+
+eign在默认情况下使用的是JDK原生的URLConnection发送HTTP请求，没有连接池，但是对每个地址会保持一个长连接，即利用HTTP的persistence connection 。我们可以用Apache的HTTP Client替换Feign原始的http client, 从而获取连接池、超时时间等与性能息息相关的控制能力。Spring Cloud从Brixtion.SR5版本开始支持这种替换，首先在项目中声明Apache HTTP Client和feign-httpclient依赖：
+
+<!-- 使用Apache HttpClient替换Feign原生httpclient -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.netflix.feign</groupId>
+            <artifactId>feign-httpclient</artifactId>
+            <version>${feign-httpclient}</version>
+        </dependency>
+
+然后在application.properties中添加：
+
+feign.httpclient.enabled=true

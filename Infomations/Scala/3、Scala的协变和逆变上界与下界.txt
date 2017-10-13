@@ -1,0 +1,31 @@
+http://blog.csdn.net/oopsoom/article/details/24773239
+
+
+泛型：类型的参数，都定义在[]中，限制参数类型，定义时生效
+
+协变 +A ， 类似Java中的(? extends T), 即可以用T和T的子类来替换T，里氏替换原则。
+
+不变 A
+
+逆变 -A， 只能用T的父类来替换T。是逆里氏替换原则。
+
+
+上界 和下界
+
+U >: T   可以理解为 U的类型＞T的类型，则T是U的下界，即最小的类型，
+ 使用[U >: T], 其中T为下界, 表示T或T的超类
+
+U <: T 可以理解为U的类型<T的类型，则T是U的上界，即最大的类型
+使用[U <: T], 其中T为U的上界，表示T或者T的子类
+
+
+1. 协变
+[+T], covariant (or “flexible”) in its type parameter T，类似Java中的(? extends T), 即可以用T和T的子类来替换T，里氏替换原则。
+2. 不变
+不支持T的子类或者父类，只知支持T本身。
+3.逆变
+[-T], contravariant, 类似(? supers T) 只能用T的父类来替换T。是逆里氏替换原则。
+上界：
+只允许T的超类U来替换T。 [U >: T]
+下界：
+只允许T的子类U来替代T。 [U <: T]

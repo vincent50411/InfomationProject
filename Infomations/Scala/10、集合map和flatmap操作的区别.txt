@@ -1,0 +1,20 @@
+   flatmap接受的函数体，必须返回一个新的集合，对每一个输入值进行操作，返回一个新的集合，最终会做flatten操作。
+   map接受的函数体，如果是普通类型操作，即返回普通类型值，则对集合所有元素执行操作后，返回一个新的集合
+						如果是集合操作，即返回集合类型的函数体，则对原集合中每个元素操作后，返回一个新的集合，则最终返回结果为如：List（List（Int））
+   
+   
+   val words = lines.flatMap(_.split(" "))
+   
+   
+   val list = List[Int](1, 2, 3, 4);
+
+    //map可以接受普通类型返回值的函数体，也可以接受Seq类型的函数体
+    val list_1 = list.map(x => List(x + 1));
+
+    //flatMap接受的函数参数返回值必须是seq类型的，否则不合法
+    val list_2 = list.flatMap(x => List(x + 1))
+
+    //map和flatmap接受相同的函数参数（返回类型都是Seq），map后返回List(List(Int)), 而flatmap会先map，后flatten(拉平)
+    println(list_1) //返回List（List（Int））
+    println(list_1.flatten)//扁平处理后 List(Int)
+    println(list_2)//flatmap后，上面2个操作的结果List(Int)

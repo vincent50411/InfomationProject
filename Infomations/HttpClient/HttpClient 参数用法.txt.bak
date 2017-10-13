@@ -1,0 +1,57 @@
+
+
+HttpClient 传参数用法：
+request-body方式是在request-body中提供参数，此方式只能用于POST、PUT请求
+1、POST/PUT 传递JSON参数用法：
+		JSONObject jsonParam = new JSONObject();
+                jsonParam.put("startTime", "1372608000");
+                jsonParam.put("endTime", "1375286400");
+                jsonParam.put("buildType", "BUILD");
+
+                //解决中文乱码问题
+                StringEntity jsonEntity = new StringEntity(jsonParam.toString(),"utf-8");
+
+                httpPut.setEntity(jsonEntity);
+
+2、POST/PUT 传递编码后键值对参数用法：
+	// 创建参数队列
+            List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+            formparams.add(new BasicNameValuePair("startTime", "1372608000"));
+            formparams.add(new BasicNameValuePair("endTime", "1375286400"));
+            formparams.add(new BasicNameValuePair("buildType", "BUILD"));
+
+            UrlEncodedFormEntity uefEntity = new UrlEncodedFormEntity(formparams, "UTF-8");
+	    httpPut.setEntity(uefEntity);
+
+3、GET传递参数用法：request-line方式
+	A、URL直接拼接参数，如果有中文，则需要编码
+		//封装请求键值对参数  
+	        List<NameValuePair> params = Lists.newArrayList();  
+	        params.add(new BasicNameValuePair("cityEname", "henan")); 
+
+		//转换为键值对  
+		String str = EntityUtils.toString(new UrlEncodedFormEntity(params, Consts.UTF_8));  
+		//创建Get请求  
+		HttpGet httpGet = new HttpGet(url+"?"+str); 
+
+	B、利用HttpClient提供的工具类
+	HttpClient程序包为我们提供了URIUtils工具类，可以通过它生成带参数的URI
+		URI uri = URIUtils.createURI("http", "localhost", -1, "/index.html",     "param1=value1&m2=value2", null);     
+		HttpUriRequest request = new HttpGet(uri); 
+		需要注意的是，如果参数中含有中文，需将参数进行URLEncoding处理
+		tring param = "param1=" + URLEncoder.encode("中国", "UTF-8") + "&m2=value2";     
+		URI uri = URIUtils.createURI("http", "localhost", 8080,    "/sshsky/index.html", param, null);     
+		System.out.println(uri);    
+
+		对于参数的URLEncoding处理，HttpClient程序包为我们准备了另一个工具类：URLEncodedUtils。通过它，我们可以直观的（但是比较复杂）生成URI
+		ist<NameValuePair> params = new ArrayList<NameValuePair>();     
+		params.add(new BasicNameValuePair("param1", "中国"));     
+		params.add(new BasicNameValuePair("param2", "value2"));     
+		
+		//中文处理
+		String param = URLEncodedUtils.format(params, "UTF-8");     
+
+		URI uri = URIUtils.createURI("http", "localhost", 8080,   "/sshsky/index.html", param, null);     
+		System.out.println(uri);    
+
+

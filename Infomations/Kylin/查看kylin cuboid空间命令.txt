@@ -1,0 +1,2 @@
+命令行切换到kylin 根目录
+bin/kylin.sh org.apache.kylin.engine.mr.common.CubeStatsReader  cube_001

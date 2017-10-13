@@ -1,0 +1,12 @@
+
+Hadoop 相关总结
+
+1、查看yarn资源占用情况，分析哪些application占用资源
+yarn application -list
+
+删除yarn中的application 
+yarn application -kill application_1437456051228_1725 
+
+
+
+

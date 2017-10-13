@@ -1,0 +1,108 @@
+
+https://zhuanlan.zhihu.com/p/22254468?refer=dataeye
+
+
+
+kylin依赖的环境
+
+Hadoop版本2.7.0
+
+Hbase版本 
+
+Hive版本 
+
+
+
+
+1、解压
+
+tar –zxvf apache-kylin-1.5.2.1-src.tar.gz
+
+ 
+
+2、配置kylin环境变量          vim比vi高级, Linux操作手册：  http://www.runoob.com/linux/linux-vim.html
+
+Vim /etc/profile          
+
+然后添加
+
+export  KYLIN_HOME=/usr/local/apache-kylin-1.6.0-hbase1.x-bin    value是kylin的路径
+
+然后退出编辑
+
+最后soruce /etc/profile使kylin的环境变量生效
+
+最后最后echo $KYLIN_HOME一下，看看环境变量是否生效。
+
+ 
+
+3、检查环境是否OK  ，因为kylin要使用hive表,hdfs，hbase表，并且可以进行submit job
+
+执行$KYLIN_HOME/bin/check-env.sh 看看是否正常
+
+正常情况下，只会输出kylin环境变量地址
+
+ 
+
+4、$KYLIN_HOME/bin/kylin.sh start 将kylin进程run起来
+
+Run起来后会输出日志，同时在$KYLIN_HOME/logs也会打出日志
+
+正常情况下，http://192.168.22.102:7070/kylin (ip请换成你自己的) ，访问该地址即可访问kylin
+
+默认帐号密码是
+
+ADMIN
+
+KYLIN
+
+ 
+
+5、$KYLIN_HOME/bin/kylin.sh stop进行停止
+
+
+注意：
+kylin配置完成后，需要检查hadoop namenode节点有没有启动historyserver    name node节点上启动命令：mr-jobhistory-daemon.sh start historyserver
+
+在安装kylin的机器上（hadoop data node 节点），检查hadoop 环境中mapred-site.xml配置文件中添加：
+<property>  
+        <name>mapreduce.jobhistory.address</name>  
+        <value>vm-centeros10.hkgp.net:10020</value>  
+</property>
+
+ 
+
+************************************************** Kylin 环境的恢复 ************************************************************************
+如果因为HBase环境的原因，导致kylin再启动或者访问是，提示元表数据找不到或者已经存在kylin_metadata等，需要检查kylin相关的元数据。如果需要重新恢复kylin的运行环境
+参考一下方法和步骤：
+1、先检查HBase中kylin相关元数据表是否存在，list
+如果HBase中元表数据不存在，而kylin在运行 metastore.sh时提示kylin_metadata已经存在，则需要进入zookeeper节点，清理掉HBase节点下的缓存数据
+
+因为格式化HDFS只会删除掉HDFS上的HBase数据，而不会清理掉zookeeper上节点保存的数据，导致恢复kylin无法正常进行
+
+进入zookeeper任意节点，
+cd /ZOOKEEPER_HOME/bin下， 可以看到zkCli.sh
+cd .. 执行zkCli.sh（bin/zkCli.sh）,命令行会提示进入zkClin模式，可以任意键入字符串，会提示可执行的命令
+
+ls /  (该命令会显示zookeeper根节点下的目录)[zookeeper, yarn-leader-election, hbase, hadoop-ha, kylin]
+
+为了安全起见，直接进入 ls /hbase/table  显示：[kylin_metadata, kylin_metadata_user, hbase:meta, KYLIN_QQZSBTMY2L, hbase:namespace, test01, kylin_metadata_acl]
+删除kylin相关的表：rmr /hbase/table/kylin_metadata
+
+2、不用重启HBase，进入kylin_home目录后，执行 bin/metastore.sh  可以看到可执行的命令如：
+usage: metastore.sh backup
+       metastore.sh fetch DATA
+       metastore.sh reset         重新设置kylin环境
+       metastore.sh restore PATH_TO_LOCAL_META
+       metastore.sh list RESOURCE_PATH
+       metastore.sh cat RESOURCE_PATH
+       metastore.sh remove RESOURCE_PATH
+       metastore.sh clean [--delete true]  删除或者清理掉kylin的环境数据，
+
+首先，执行bin/metastore.sh clean --delete true  删除掉kylin的环境（如果想先查看那些数据可以被清理，true替换成false）
+然后，执行bin/metastore.sh reset   就可以将kylin的环境重置
+
+最后启动kylin     bin/kylin.sh start
+
+
+
