@@ -1,0 +1,47 @@
+----- CentOS 7 虚拟机安装完成后，网络设置为 桥接模式，但是无法使用网络的操作。
+---使用ping 主机的方式，提示 connect: Network is unreachable
+
+由于centos7 和之前的版本差异比较大，之前的一些命令不能完全使用。
+
+centos7 minimal刚装默认没有打开网卡。
+
+步骤一：cd /etc/sysconfig/network-scripts/    
+步骤二:   ls  这时候你会发现没有教程上说的ifcfg-eth0文件，打开第一个即可。
+
+有的教程找不到就新建一个，肯定是错的。
+
+
+步骤三: sudo vim ifcfg-enp0s3   （sudo是避免无权限操作文件时的命令）
+修改ONBOOT=no 为yes
+
+[liuwens@localhost network-scripts]$ cat ifcfg-enp0s3 
+TYPE=Ethernet
+BOOTPROTO=dhcp
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILURE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME=enp0s3
+UUID=84356cbe-0c36-4c58-bd6a-56193bcb0fee
+DEVICE=enp0s3
+ONBOOT=no    ------------------默认值是no，将该值设置为yes
+PEERDNS=yes
+PEERROUTES=yes
+IPV6_PEERDNS=yes
+IPV6_PEERROUTES=yes
+
+步骤四：修改ONBOOT为yes  保存退出（：wq!）
+
+步骤五：service network restart
+
+测试 ping 10.3.99.43 可以正常ping通
+
+DEVICE=enp0s3  是设备名称，
+
+=============================================
+输入ip addr 检查 enp0s3 IP地址是不是和主机属于同一个网段。
+打开浏览器 既可以连上网络
+

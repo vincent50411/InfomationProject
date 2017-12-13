@@ -1,0 +1,19 @@
+
+1、使用su切换当前用户到root下
+
+2、使用 ll /etc/sudoers可以查看到sudoers文件目前只能读，所以使用命令chmod 640 /etc/sudoers将root设置为可写
+
+-rw-r-----. 1 root root 3907 11月  5 2016 /etc/sudoers
+
+3、使用vim /etc/sudoers编辑文件，找到 
+## Allow root to run any commands anywhere 
+root	ALL=(ALL) 	ALL
+
+4、在下面增加自己的用户
+liuwens	ALL=(ALL)	ALL
+
+5、将sudoers权限设置回原来的只读，chomod 440 /etc/sudoers
+
+
+=============================
+可以使用sudo 命令了， 如果不行 可以尝试重启

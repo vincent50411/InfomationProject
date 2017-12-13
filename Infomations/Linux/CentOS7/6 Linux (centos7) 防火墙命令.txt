@@ -1,0 +1,36 @@
+防火墙配置
+CentOS 7默认使用的是firewall作为防火墙，这里改为iptables防火墙。
+
+
+
+firewall操作：
+
+# service firewalld status; #查看防火墙状态
+
+
+ （disabled 表明 已经禁止开启启动 enable 表示开机自启，inactive 表示防火墙关闭状态 activated（running）表示为开启状态）
+
+# service firewalld start;（测试可用）  或者 #systemctl start firewalld.service;#开启防火墙
+# service firewalld stop;  （不可用）或者 #systemctl stop firewalld.service;#关闭防火墙
+
+# service firewalld restart;  或者 #systemctl restart firewalld.service;  #重启防火墙
+
+# systemctl disable firewalld.service#禁止防火墙开启自启
+
+
+# systemctl enable firewalld#设置防火墙开机启动
+#yum remove firewalld#卸载firewall
+
+
+安装iptables防火墙及操作：
+
+#yum install iptables-services#安装iptables防火墙
+
+#vi /etc/sysconfig/iptables#编辑防火墙配置文件，开放3306端口
+
+   添加配置：-A INPUT -p tcp -m state --state NEW -m tcp --dport 3306 -j ACCEPT
+#systemctl restart iptables.service 
+#最后重启防火墙使配置生效
+
+#systemctl enable iptables.service 
+#设置防火墙开机启动
