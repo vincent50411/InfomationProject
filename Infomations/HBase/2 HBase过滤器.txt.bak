@@ -1,0 +1,32 @@
+http://www.cnblogs.com/liuwei6/p/6840300.html
+
+HBase内置过滤器说明：
+http://blog.csdn.net/cnweike/article/details/42920547
+
+过滤器的类型很多，但是可以分为两大类——比较过滤器，专用过滤器
+过滤器的作用是在服务端判断数据是否满足条件，然后只将满足条件的数据返回给客户端；
+
+
+HBase过滤器的比较运算符：
+LESS <
+LESS_OR_EQUAL <=
+EQUAL =
+NOT_EQUAL <>
+GREATER_OR_EQUAL >=
+GREATER >
+NO_OP 排除所有
+
+HBase过滤器的比较器（指定比较机制）
+BinaryComparator	按字节索引顺序比较指定字节数组，采用Bytes.compareTo(byte[]);
+BinaryPrefixComparator	跟前面相同，只是比较左端的数据是否相同
+NullComparator	判断给定的是否为空
+BitComparator	按位比较
+RegexStringComparator	提供一个正则的比较器，仅支持EQUAL和非EQUAL
+SubstringComparator 判断提供的子串是否出现在value中
+
+==================================== 多条件的比较器FilterList =====================================================
+提供操作符：MUST_PASS_ALL => and操作， 所有值都通过才返回
+			      MUST_PASS_ONE => or操作，只有有一个过滤器通过就返回
+
+
+

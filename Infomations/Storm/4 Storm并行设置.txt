@@ -1,0 +1,21 @@
+参考博文：
+http://blog.csdn.net/An342647823/article/details/38867021
+http://www.cnblogs.com/catkins/p/5254377.html
+
+注：1个task即为spout或bolt的1个实例，executor线程在执行期间会调用该task的nextTuple或execute方法
+
+一个topology可以通过setNumWorkers来设置worker的数量，通过设置parallelism来规定executor的数量（一个component（spout/bolt）可以由多个executor来执行），
+通过setNumTasks来设置每个executor跑多少个task（默认为一对一）。
+
+task是spout和bolt执行的最小单元。
+
+
+注意：虽然在这设置了多个task实例，但是并行度并没有很大提高，因为只有两个线程去运行这些实例，只有设置足够多的线程和实例才可以真正的提高并行度。
+在这设置多个实例主要是为了下面执行rebalance的时候用到，因为rebalance不需要修改代码，就可以动态修改topology的并行度，这样的话就必须提前配置好多个实例，在rebalance的时候主要是对之前设置多余的任务实例分配线程去执行。
+ 
+在命令行动态修改并行度
+除了使用代码进行调整，还可以在shell命令行下对并行度进行调整。
+storm rebalance mytopology -w 10 -n 2 -e spout=2 -e bolt=2
+表示 10秒之后对mytopology进行并行度调整。把spout调整为2个executor，把bolt调整为2个executor
+注意：并行度主要就是调整executor的数量，但是调整之后的executor的数量必须小于等于task的数量，如果分配的executor的线程数比task数量多的话也只能分配和task数量相等的executor。
+

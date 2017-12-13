@@ -1,0 +1,10 @@
+参考博文：
+http://blog.csdn.net/An342647823/article/details/38867021
+http://www.cnblogs.com/catkins/p/5254377.html
+
+注：1个task即为spout或bolt的1个实例，executor线程在执行期间会调用该task的nextTuple或execute方法
+
+一个topology可以通过setNumWorkers来设置worker的数量，通过设置parallelism来规定executor的数量（一个component（spout/bolt）可以由多个executor来执行），
+通过setNumTasks来设置每个executor跑多少个task（默认为一对一）。
+
+task是spout和bolt执行的最小单元。

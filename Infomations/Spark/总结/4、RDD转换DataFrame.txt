@@ -1,0 +1,18 @@
+SparkSQL 数据转换
+http://www.cnblogs.com/hadoop-dev/p/6742677.html
+
+
+
+
+val sql = new SQLContext(sc) //创建一个SQLContext对象
+import sql.implicits._ //这个sql是上面我们定义的sql，而不是某一个jar包，网上有很多
+                       //是import sqlContext.implicits._,那是他们定义的是
+                       //sqlContext = SQLContext(sc),这个是scala的一个特性
+val people = sc.textFile("people.txt")//我们采用spark的类型读入数据，因为如果用
+                                      //SQLContext进行读入，他们自动有了schema
+case clase People(id:Int,name:String,age:Int)//定义一个类
+val peopleInfo = people.map(lines => lines.split(","))
+                        .map(p => People(p(0).toInt,p(1),p(2).toInt)).toDF
+                        //这样的一个toDF就创建了一个DataFrame，如果不导入
+                        //sql.implicits._,这个toDF方法是不可以用的。
+上面的例子是利用了scala的反射技术，生成了一个DataFrame类型。可以看出我们是把RDD给转换为DataFrame的。

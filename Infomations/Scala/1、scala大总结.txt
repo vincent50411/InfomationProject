@@ -1,0 +1,155 @@
+****** *********** 数组的遍历
+利用<-  ，意义是把右边数组中的元素赋值给左边的变量, 常见于循环中 for(x <- list); for(index <- 0 to  (list.length - 1)) 等
+
+生成数据的方式：
+val list = 1 to 10；
+var list = Array("1111", "222")
+var z = new Array[String](3);
+z(0) = "sdfdsfdsf";
+to,until都表示范围，二者有何区别？
+
+to为包含上限的闭区间，如：1 to 3,Range为1,2,3;
+
+until不包含上限，如：1 to 3, Range为1,2
+
+***************** 数组的解释
+http://blog.csdn.net/bdmh/article/details/50070013
+
+****** *********** map增加元素
+利用-> ，符号左边作为key，右边做为值
+var A:Map[Char,Int] = Map()
+A += ('I' -> 1)
+
+类中的属性如果没有初始化，一般是抽象类的属性，子类需要初始化
+函数的声明不需要提供方法体和=；一般是定义抽象方法
+
+
+****** *********** 函数返回值
+有return 则返回return后面的值，没有return则返回函数最后一行命名的值。
+
+// 类级别声明的变量必须赋值  
+class Computer /*主构造函数*/() {  
+      // 类级别声明的变量必须赋值  
+      var display :String ="LED";  
+      // 私有属性  
+      private var price = 3000;  
+      // 私有属性，只能在本类中使用  
+      private[this] var cpu = "四核";  
+  
+      def this(display:String){  
+          // 最终都需要调用默认this()默认构造  
+   this();  
+          this.display =display;  
+      }  
+  
+      defsayConfig(){  
+          println("显示器："+this.display+"，价格："+this.price+",cpu:"+this.cpu);  
+      }  
+}  
+
+辅助构造函数
+Scala可以有任意多的构造函数，除主构造函数外还有任意多的辅助构造器：
+1.辅助类的构造器的名称为this(如果与类名相同修改类名的时候不方便)
+2.每一个辅助构造器都必须以一个对先前已定义的其它辅助或主构造器的调用开始。
+
+class Moblie /*主构造函数*/private /*私有构造器*/(val brand:String,val price:Int){  
+              // 定义变量  
+              var networkType :String ="";  
+              // 重载构造函数 ，一般用this定义，为了修改文件名称时方便 
+              def this(brand:String,price:Int,networkType:String){  
+                  this(brand,price);  //必须要先调用主构造函数，否则编译出错
+                  this.networkType =networkType;  
+              }  
+        } 
+
+****** *********** 如果方法在定义的时候不带括号，那么在调用的时候也不能带括号
+calss HelloWorld{
+private var name  = "HEL"
+def sayHello(){print("HEllo,"+name)}   //在类中不叫函数 叫方法
+def getName = name
+}
+
+//创建类的对象，并调用其方法
+val helloworld =new HelloWorld
+helloword.sayHello()
+//如果方法在定义的时候不带括号，那么在调用的时候也不能带括号
+print(helloworld.getname)
+
+****** *********** 匿名函数定义（使用=>）, 匿名函数的返回值采用的是无return，即最后一行命名值
+var inc = (x:Int) => x+1
+匿名函数定义：(形参列表) => {函数体}；匿名函数参数列表必须有()，如果没有具体参数用空的()表示 () => {1 + 2}
+(x:Int, y:Int) => x+y
+====== 需要注意的表达式形式区别：当函数作为参数输入时的格式为 f:(A, B, C) => D   f是函数的别名，A,B,C 是输入参数类型，不用指定形参名，D是返回值类型
+scala匿名函数可以定义为常量函数，即表达式可以表示为：
+val inc = (x:Int) => x+1
+
+****** *********** 函数作为参数的定义格式  参数名称: 函数参数列表 => 函数返回值
+def funA(paramName:(Int, Int, String) => String) = {...}
+
+可参看各种类的API中的方法，如List中的各个高阶函数：def filter(p: (A) => Boolean): List[A]
+
+如果参数列表只有一个参数 可以省略()。
+
+paramName是函数的别名，
+函数作为参数的调用，规定了入参函数定义的参数列表和返回值必须一致。
+=> 左边是作为参数的函数的参数列表
+=> 右边是作为参数的函数的返回值类型
+
+可以和js中的回调函数类比
+
+//main函数中调用
+refFunction(callBackA, "成功啦!")
+
+
+def refFunction(fun:(String, Boolean) => Unit, message:String) : Unit =
+  {
+    //被调用的参数函数fun的入参需要在这里提供
+    fun(message, true)
+  }
+
+  //定义回调函数
+  def callBackA(data:String, status:Boolean) =
+  {
+    if(status)
+    {
+      println("执行成功, result:" + data)
+    }
+    else{
+      println("执行失败: result:" + data)
+    }
+
+
+========================================================================
+闭包是一个函数，返回值依赖于声明在函数外部的一个或多个变量。
+闭包通常来讲可以简单的认为是可以访问一个函数里面局部变量的另外一个函数。
+var factor = 3  
+val multiplier = (i:Int) => i * factor 
+
+闭包
+返回值是一个匿名函数表达式，函数的子函数可以使用函数的变量
+被外部调用后，子函数对象一直处于激活状态。
+
+var addFunction = add(10);
+
+    println(addFunction(100));
+
+     println(addFunction(200));
+
+def add(more:Int) =
+    {
+          //定义匿名函数
+          var function = (value:Int) =>
+          {
+            var name:String = "userName;";
+            
+            //内部函数可以使用父函数的变量
+            var message:String = (more + value) + name;
+            
+            //返回消息
+            message;
+          }
+      
+      //返回匿名函数的名称
+      function;
+
+    }

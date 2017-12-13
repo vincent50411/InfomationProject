@@ -1,0 +1,134 @@
+参考博文地址：http://blog.csdn.net/smartxxyx/article/details/48162513
+
+λ表达式主要用于替换以前广泛使用的内部匿名类，各种回调，比如事件响应器、传入Thread类的Runnable等
+
+============================================ lamdab理解 http://blog.csdn.net/jinzhencs/article/details/50748202 ===========================================================================================
+函数式接口：Functional Interface. 
+定义的一个接口，接口里面必须 有且只有一个抽象方法 ，这样的接口就成为函数式接口。 
+任何函数式接口都可以使用lambda表达式替换。 
+例如：ActionListener、Comparator、Runnable
+
+lamdab表达式的类型称为“目标类型”，必须符合某一类函数式接口 Function<T, R> ，Consumer<T>，Predicate<T>
+
+lambda表达式只能出现在目标类型为函数式接口的上下文中。
+
+你在某处就真的只需要一个能做一件事情的函数而已，连它叫什么名字都无关紧要。 
+Lambda 表达式就可以用来做这件事。
+
+基本语法: 
+(parameters) -> expression 或 (parameters) ->{ statements; } 
+即: 参数 -> 带返回值的表达式/无返回值的陈述
+
+============================================  什么是λ表达式 http://blog.csdn.net/ioriogami/article/details/12782141/ ==============================================================================================
+λ表达式本质上是一个匿名方法。让我们来看下面这个例子：
+    public int add(int x, int y) {
+        return x + y;
+    }
+转成λ表达式后是这个样子：
+    
+    (int x, int y) -> x + y;
+参数类型也可以省略，Java编译器会根据上下文推断出来：
+    (x, y) -> x + y; //返回两数之和
+ 
+或者
+    (x, y) -> { return x + y; } //显式指明返回值
+可见λ表达式有三部分组成：参数列表，箭头（->），以及一个表达式或语句块。
+下面这个例子里的λ表达式没有参数，也没有返回值（相当于一个方法接受0个参数，返回void，其实就是Runnable里run方法的一个实现）：
+    () -> { System.out.println("Hello Lambda!"); }
+如果只有一个参数且可以被Java推断出类型，那么参数列表的括号也可以省略：
+    c -> { return c.size(); }
+
+================================================== Lamdab表达式类型转换 ====================================================================================
+
+1、根据目标类型推导，参数类型也可以根据目标类型推导
+Comparator<String> c = (s1, s2) -> s1.compareToIgnoreCase(s2);
+
+返回类型为String，所以推导出lamdab表达式的返回值是String类型，进而推导出s1, s2是String类型，可以省去参数的类型声明了。
+
+
+================================================== 类型推导：转换 ====================================================================================
+
+类型转换，如果参数的类型不明确，则需要Cast类型，如下，JSONArray里面保存的是Object，类型是JSONObject，需要通过类型转换
+JSONArray dataSetResult = positionDefinitionDao.queryPositionListDao(searchParam);
+
+分析：
+dataSetResult.parallelStream() 推导出来的类型应该是Object
+ ((JSONObject) item).getString("rpof_type")  是将Object对象的类型转换为JSONObject进行操作
+
+
+Map<String, List<Object>> positionListGroupByRpofType = dataSetResult.parallelStream().collect(Collectors.groupingBy(item -> ((JSONObject) item).getString("rpof_type")));
+
+================================================== 类型推导 ====================================================================================
+List<Person> ps = ...
+Stream<String> names = ps.stream().map(p -> p.getName());
+
+在上面的代码中，ps的类型是List<Person>，所以ps.stream()的返回类型是Stream<Person>。
+map()方法接收一个类型为Function<T, R>的函数式接口，这里T的类型即是Stream元素的类型，也就是Person，而R的类型未知。
+由于在重载解析之后lambda表达式的目标类型仍然未知，我们就需要推导R的类型：
+通过对lambda表达式函数体进行类型检查，我们发现函数体返回String，因此R的类型是String，因而map()返回Stream<String>。
+
+绝大多数情况下编译器都能解析出正确的类型，但如果碰到无法解析的情况，我们则需要：
+
+使用显式lambda表达式（为参数p提供显式类型）以提供额外的类型信息
+把lambda表达式转型为Function<Person, String>
+为泛型参数R提供一个实际类型。（.<String>map(p -> p.getName())）
+
+
+============================================ 方法的引用 ==============================================================================================
+静态方法引用：ClassName::methodName
+实例上的实例方法引用：instanceReference::methodName
+超类上的实例方法引用：super::methodName
+类型上的实例方法引用：ClassName::methodName
+构造方法引用：Class::new
+数组构造方法引用：TypeName[]::new
+对于静态方法引用，我们需要在类名和方法名之间加入::分隔符，例如Integer::sum。
+
+
+
+============================================ 自定义函数式接口 ==============================================================================================
+/**
+ * 自定义一个函数式接口
+ * @author MingChenchen
+ *
+ */
+public interface MyActionInterface {
+    public void saySomeThing(String str);
+    /**
+     * Java8引入的新特性 接口中可以定义一个default方法的实现 (不是abstract)
+     */
+    default void say(){
+        System.out.println("default say");
+    }
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * 在我们自定义的函数式接口的地方使用lambda表达式
+ * @author MingChenchen
+ *
+ */
+public class WantSay {
+    /**
+     * 执行接口中的saySomeThing方法
+     * @param action
+     * @param thing
+     */
+    public static void excuteSay(MyActionInterface action,String thing){
+        action.saySomeThing(thing);
+    }
+
+    public static void main(String[] args) {
+        /*
+        excuteSay(new MyActionInterface(){
+            @Override
+            public void saySomeThing(String str) {
+                System.out.println(str);
+            }
+        },"Hello World");
+        */
+
+        excuteSay((String s) -> System.out.println(s),"Hello world new");
+
+    }
+
+
+

@@ -1,0 +1,110 @@
+ http://blog.csdn.net/yuan_xw/article/details/48650019
+
+
+========================================== case class 的说明======================================================
+case class与模式匹配一起使用
+让编译器帮忙自动生成常用方法！
+Case Class就是最好的选择。当你希望设计一个类只是用来作为数据载体时， 
+Case Class是一个很好的选择，实际上，这正是DTO（或者也有叫作VO）做的事情，所以说Case Class的一个典型应用场景就是DTO。
+另外，通常不会让一个普通类继承Case Class，这会导致一些问题，比如：equals/hashCode/toString方法都会失效。
+
+//抽象类Person
+abstract class Person
+
+//case class Student
+case class Student(name:String,age:Int,studentNo:Int) extends Person
+//case class Teacher
+case class Teacher(name:String,age:Int,teacherNo:Int) extends Person
+//case class Nobody
+case class Nobody(name:String) extends Person
+
+//可以认为case class为DTO实体类 结合模式匹配使用
+object CaseClassDemo{
+  def main(args: Array[String]): Unit = {
+    //case class 会自动生成apply方法，从而省去new操作
+    val p:Person=Student("john",18,1024)  
+    //match case 匹配语法  
+    p  match {
+      case Student(name,age,studentNo)=>println(name+":"+age+":"+studentNo)
+      case Teacher(name,age,teacherNo)=>println(name+":"+age+":"+teacherNo)
+      case Nobody(name)=>println(name)
+    }
+  }
+}
+SparkSQL应用案例 http://blog.csdn.net/lovehuangjiaju/article/details/46946533
+========================================sealed case class ========================================================================
+sealed class的所有子类，无论是否是抽象类，都必须跟 sealed class 在同一个文件中。
+
+而abstract class并没有这样的规定。
+在进行模式匹配的时候，有些时候需要确保所有的可能情况都被列出，此时常常会将case class的超类定义为sealed（密封的) case class，如：
+
+//Person最前面加了个关键字sealed
+sealed abstract class Person
+
+case class Student( name:String, age:Int, studentNo:Int) extends Person
+
+case class Teacher( name:String, age:Int, teacherNo:Int) extends Person
+
+case class Nobody( name:String) extends Person
+
+case class SchoolClass(classDescription:String,persons:Person*)
+
+object CaseClassDemo{
+  def main(args: Array[String]): Unit = {
+     val s:Person=Student("john",18,1024)
+     //这边仅仅给出了匹配Student的情况，在编译时
+     //编译器会提示
+     //match may not be exhaustive. It would fail on the following inputs: Nobody(_), Teacher(_, _, _)
+     s match{
+       case Student(name,age,studentNo)=>println("Student")
+     }
+  }
+}
+
+编译器给出的提示可以通过下列语句进行消除，
+
+//下面的语句达到了sealed class的要求
+ val s:Person=Student("john",18,1024)
+     s match{
+       case Student(name,age,studentNo)=>println("Student")
+       case Teacher(name,age,studentNo)=>println("Teacher")
+       case Nobody(name)=>println("Nobody")
+     }
+
+
+======================================== ========================================================================
+
+
+class Outer(name:String){
+	/ /语法使得outer变量指向Outer.this。等同于this的操作。对这个变量，可以 使用任何合法的名称。
+	outer=>
+
+	def say():Unit={
+		outer.name;
+	}
+}
+
+
+伴生对象
+    在Java或C++中即有实例方法又有静态方法。在Scala可以通过类与同名的“伴生”对象来达到同样的目的。
+   类和它的伴生对象可以互相访问私有特性。
+   它们必须在于同一个源文件中。
+// 伴生对象(一般情况下，做为伴生类的静态区域)  
+        object University {  
+          private var studentNo = 0;  
+          def newStudentNo(): Int = {  
+            studentNo = studentNo + 1  
+            studentNo  
+          }  
+        }  
+          
+        // 伴生类  
+        class University {  
+          var id = University.studentNo;  
+          private var number = 0;  
+          def adClass(number: Int) {  
+            this.number += number;  
+          }  
+        }  
+
+

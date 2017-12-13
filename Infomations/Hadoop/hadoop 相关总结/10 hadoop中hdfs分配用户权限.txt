@@ -1,0 +1,39 @@
+说明：larry 是当前用户，可以是root
+		hadoop是组
+
+将当前用户larry加入到hadoop组
+sudo usermod -a -G hadoop larry
+
+将hadoop组加入到sudoer
+sudo gedit etc/sudoers
+在root ALL=(ALL) ALL后 hadoop ALL=(ALL) ALL
+修改hadoop目录的权限
+sudo chown -R larry:hadoop /home/larry/hadoop<所有者：组 文件>
+修改hdfs的权限
+sudo chmod -R 755 /home/larry/hadoop
+sudo bin/hadoop dfs -chmod -R 755 /
+sudo bin/hadoop dfs -ls /
+修改hdfs文件的所有者
+sudo bin/hadoop fs -chown -R larry /
+解除hadoop的安全模式
+sudo bin/hadoop dfsadmin -safemode leave
+拷贝本地文件到hdfs
+hadoop fs -copyFromLocal <localsrc> URI
+将路径指定文件的内容输出到stdout
+hadoop fs -cat file:///file3 /user/hadoop/file4
+改变文件的所属组
+hadoop fs -chgrp [-R] GROUP URI
+改变用户访问权限
+hadoop fs -chmod [-R] 755 URI
+修改文件的所有者
+hadoop fs -chown [-R] [OWNER][:[GROUP]] URI [URI ]
+拷贝hdfs文件到本地
+hadoop fs -copyToLocal URI localdst
+拷贝hdfs文件到其它目录
+hadoop fs -cp URI [URI …] <dest>
+显示目录中所有文件的大小
+hadoop fs -du URI [URI …]
+合并文件到本地目录
+hadoop fs -getmerge <src> <localdst> [addnl]
+
+

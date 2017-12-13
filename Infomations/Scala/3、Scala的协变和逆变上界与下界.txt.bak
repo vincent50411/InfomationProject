@@ -15,7 +15,7 @@ trait OutputChannel[-Msg] {
 ......  
 
 ================= 上界 和下界 ============================================
-** Scala中, <界>用于泛型类中的方法的参数类型上
+** Scala中, 界却用于泛型类中的方法的参数类型上
 示例：
 对于Queue中的append的类型参数直接写T, 会报错 (error: covariant type T occurs in contravariant position in type T of value x) 
 这个地方比较复杂, 简单的说就是Scala内部实现是, 把类中的每个可以放类型的地方都做了分类(+, –, 中立), 具体分类规则不说了 

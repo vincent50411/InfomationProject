@@ -1,0 +1,35 @@
+测试代码,可以本地直接运行程序，查看结果
+
+object MainTest {
+
+  def main(arg:Array[String]):Unit = {
+	
+    val sc = new SparkConf().setAppName("test-app").setMaster("local");
+
+    val sparkContext = new SparkContext(sc);
+
+    val rdd = sparkContext.textFile("hdfs://vm-linux-161.hkhf.hkgp.net:8020/user/root/test.text")
+
+    val countValue = rdd.count();
+
+
+    println("Hello world! line item count:" + countValue);
+
+  }
+}
+
+======================= 提交集群
+http://blog.csdn.net/kinger0/article/details/46562473
+在spark网关机器上任意位置上次jar，采用以下几种方式提交
+首先，目录切换到spark/bin
+1、./spark-submit --class com.huntkey.test.MainTest  --master local /home/spark/lws-test/spark-demo-01.jar
+本地模式，jar包前面不能有--jars 否则提示资源丢失异常
+
+2、./spark-submit --class com.huntkey.test.MainTest  --master yarn-client /home/spark/lws-test/spark-demo-01.jar
+yarn-client 在yarn上提交
+
+3、./spark-submit --class com.huntkey.test.MainTest  --master yarn-cluster /home/spark/lws-test/spark-demo-01.jar
+yarn集群上提交任务
+
+4、./spark-submit --class com.huntkey.test.MainTest  --master spark://10.3.98.164:46503 /home/spark/lws-test/spark-demo-01.jar 
+spark环境上提交任务

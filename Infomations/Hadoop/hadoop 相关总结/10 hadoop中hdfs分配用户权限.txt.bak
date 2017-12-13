@@ -1,0 +1,9 @@
+说明：larry 是当前用户，可以是root
+		hadoop是组
+
+将当前用户larry加入到hadoop组
+sudo usermod -a -G hadoop larry
+
+
+
+

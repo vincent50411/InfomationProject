@@ -1,0 +1,85 @@
+一、函数是第一等公民
+
+Scala中，函数上升和变量同等的位置，或者说函数也是一种变量。
+Scala中的函数可以作为实参传递给另一个函数；
+函数可以作为返回值；=> 闭包的实现
+函数可以赋值给变量(这个变量需符合函数的类型的变量)；=> 匿名函数的实现
+函数可以存储在数据结构之中。=> 函数是实现FunctionN的特殊类
+函数如同普通变量一样，也具有类型。=> 函数是实现FunctionN的特殊类
+
+二、函数类型
+
+形式：A=>B
+A为输入类型，B为输出类型
+如Int => String，把整形数变成String类型。
+
+三、高阶函数
+函数作为参数的格式定义：
+	函数别名:(参数类型，参数类型) => 返回值类型
+	fun:(Int, String, A, B) => Boolean
+
+用函数作为形参或者作为返回值的函数称为高阶函数。
+
+def filter(fun:(A) => B):List[A]
+
+def functionTest(param:A):B;
+
+--将functionTest作为参数传递给filter，filter入参为函数类型，必须和functionTest中的入参、返回值一致
+filter(functionTest);
+
+函数作为返回值
+def greeting() = {
+	//匿名函数
+	(name:String) => {"Hello, " + name}
+}
+
+
+四、匿名函数
+	定义格式：
+		(形参列表) => {函数体}
+
+匿名函数也称为函数常量，也称函数文字量(类比String)。
+
+如：
+(x:Int, y:Int) => x+y
+val fun = (x:Int, y:Int) => x+y
+var funr = (x:Int, y:Int) => x+y
+上面三句都是可以使用的。
+fun不能重新赋值，funr可以赋值其他的类型为(Int, Int)=>Int的函数。
+
+======================= 高阶函数应用 ======================================
+将函数赋值给一个变量需要注意：
+def fun1(userName:String, age:Int):Unit = {
+
+  }
+
+  如果函数携带参数，赋值表达式为：val fun_1 = fun1 _;//函数名 _   中间一定要加空格; 如果函数没有参数列表，则不需要_
+
+ fun1("Spark")
+
+=============================================================
+高阶函数的两个层面：
+1. 函数的参数是函数
+2. 函数的返回值是函数
+高阶函数有一个重要的性质就是类型推断，可以自动推断出具体的参数和类型，并且对于只有一个参数的函数，可以省略掉小括号，如果在参数作用的函数体内，只使用一次输入参数的参数值的话，那么可以将函数的输入参数的名称省略，用下划线 _ 来代替。
+
+  //之前定义函数的时候是func : (content : String)，因为函数中就一个参数，就可以将函   数的参数名省略。
+    scala> def spark(func:(String) => Unit,name:String){func(name)}
+spark: (func: String => Unit, name: String)Unit
+
+    scala> spark((name : String) => println(name),"Scala")
+Scala
+//为啥可以省略掉String,因为我们定义的时候传入的参数是String类型，而且确实传入  的值也是String类型，scala可以进行类型推导，所以可以省略。
+scala> spark((name) => println(name),"Scala")
+Scala
+
+//如果只有一个参数的时候 () 也可以省略掉了。
+scala> spark(name => println(name),"Scala")
+Scala
+
+//因为函数体本身只有一个参数，所以可以将参数省略掉，用下划线代替。
+scala> spark(println(_),"Scala")
+Scala
+
+//如果只有一个参数的时候，() 也可以省略。
+    scala> spark(println , "Scala")

@@ -1,0 +1,175 @@
+https://www.ibm.com/developerworks/cn/java/j-lo-java8streamapi/
+================================= stream 概念理解 =====================================================
+stream:可以支持顺序和并行对元素操作的元素集合。
+
+简单来讲，stream就是JAVA8提供给我们的对于元素集合统一、快速、并行操作的一种方式。 
+它能充分运用多核的优势，以及配合lambda表达式、链式结构对集合等进行许多有用的操作。
+
+中间方法和终点方法： 
+它具有过滤、映射以及减少遍历数等方法，这些方法分两种：中间方法和终端方法， 
+“流”抽象天生就该是持续的，中间方法永远返回的是Stream，因此如果我们要获取最终结果的话， 
+必须使用终点操作才能收集流产生的最终结果。区分这两个方法是看他的返回值， 
+如果是Stream则是中间方法，否则是终点方法。
+
+================================= 如何使用stream? =====================================================
+1.通过Stream接口的静态工厂方法（注意：Java8里接口可以带静态方法）； 
+2.通过Collection接口的默认方法（默认方法：Default method，也是Java8中的一个新特性，就是接口中的一个带有实现的方法）–stream()，把一个Collection对象转换成Stream
+
+一般情况下，我们都使用Collection接口的 .stream()方法得到stream.
+
+JSONArray dataSetResult = 
+
+dataSetResult.stream()
+
+dataSetResult.parallelStream()
+
+================================= 常见的几个中间方法 Intermediate  =====================================================
+中间方法即是一些列对元素进行的操作。譬如过滤、去重、截断等。
+map (mapToInt, flatMap 等)、 filter、 distinct、 sorted、 peek、 limit、 skip、 parallel、 sequential、 unordered
+
+1.Filter（过滤）
+//过滤18岁以上的人
+List persons = …
+Stream personsOver18 = persons.stream().filter(p -> p.getAge() > 18); 
+ 
+2.Map(对元素进行操作)
+//把person转成Adult
+Stream map = persons.stream().filter(p -> p.getAge() > 18).map(person -> new Adult(person)); 
+ 
+3.limit(截断) 
+对一个Stream进行截断操作，获取其前N个元素，如果原Stream中包含的元素个数小于N，那就获取其所有的元素
+
+4.distinct(去重) 
+对于Stream中包含的元素进行去重操作（去重逻辑依赖元素的equals方法），新生成的Stream中没有重复的元素
+
+
+================================= 常见的几个终端方法 Terminal =====================================================
+通过中间方法，我们对stream的元素进行了统一的操作，但是中间方法得到还是一个stream。
+要想把它转换为新的集合、或者是统计等,我们需要使用终点方法。
+forEach、 forEachOrdered、 toArray、 reduce、 collect、 min、 max、 count、 anyMatch、 allMatch、 noneMatch、 findFirst、 findAny、 iterator
+
+1.count(统计) 
+count方法是一个流的终点方法，可使流的结果最终统计，返回int，比如我们计算一下满足18岁的总人数
+
+int countOfAdult=persons.stream()
+                       .filter(p -> p.getAge() > 18)
+                       .map(person -> new Adult(person))
+                       .count();
+ 
+2.Collect(收集流的结果) 
+collect方法也是一个流的终点方法，可收集最终的结果
+
+List adultList= persons.stream()
+                       .filter(p -> p.getAge() > 18)
+                       .map(person -> new Adult(person))
+                       .collect(Collectors.toList());
+
+3、reduce
+这个方法的主要作用是把 Stream 元素组合起来。
+它提供一个起始值（种子），然后依照运算规则（BinaryOperator），和前面 Stream 的第一个、第二个、第 n 个元素组合。
+从这个意义上说，字符串拼接、数值的 sum、min、max、average 都是特殊的 reduce。
+
+这篇博文详细介绍终端方法的使用：https://www.ibm.com/developerworks/cn/java/j-lo-java8streamapi/
+
+================================= Short-circuiting： =====================================================
+短路操作
+Short-circuiting：
+anyMatch、 allMatch、 noneMatch、 findFirst、 findAny、 limit
+Stream.generate(Supplier<T> s)就是一个生成器函数。其中参数Supplier是一个函数接口，里面有唯一的抽象方法 <T> get()。
+Stream.generate(Math::random).limit(5).forEach(System.out::println);
+注意这个limit(5)，如果没有这个调用，那么这条语句会永远地执行下去。也就是说这个生成器是无穷的。这种调用叫做终结操作，或者短路（short-circuiting）操作。
+
+================================= 顺序流和并行流 =====================================================
+使用顺序方式去遍历时，每个item读完后再读下一个item。///////////////// persons.stream()；
+
+使用并行去遍历时，数组会被分成多个段，其中每一个都在不同的线程中处理，然后将结果一起输出。
+dataSetResult.parallelStream()；
+
+并行流原理： 
+List originalList = someData; 
+split1 = originalList(0, mid);//将数据分小部分 
+split2 = originalList(mid,end); 
+new Runnable(split1.process());//小部分执行操作 
+new Runnable(split2.process()); 
+List revisedList = split1 + split2;//将结果合并
+
+性能：如果是多核机器，理论上并行流则会比顺序流快上一倍。
+
+本篇文章末尾有性能对比测试
+http://blog.csdn.net/jinzhencs/article/details/50748202
+
+
+http://blog.csdn.net/ioriogami/article/details/12782141/
+List l被迭代了好多次，map，filter，distinct都分别是一次循环，效率会不好。实际并非如此。
+这些返回另一个Stream的方法都是“懒（lazy）”的，而最后返回最终结果的collect方法则是“急（eager）”的。在遇到eager方法之前，lazy的方法不会执行。
+当遇到eager方法时，前面的lazy方法才会被依次执行。而且是管道贯通式执行。这意味着每一个元素依次通过这些管道。
+map -> filter -> distinct : collect
+例如有个元素“3”，首先它被map成整数型3；然后通过filter，发现是素数，被保留下来；
+又通过distinct，如果已经有一个3了，那么就直接丢弃，如果还没有则保留。
+这样，3个操作其实只经过了一次循环。
+
+================================= 捕获（Capture） =====================================================
+简单的说，如果一个局部变量在初始化后从未被修改过，那么它就符合有效只读的要求，换句话说，加上final后也不会导致编译错误的局部变量就是有效只读变量。
+
+================================= 方法引用（Method reference） ========================================
+任何一个λ表达式都可以代表某个函数接口的唯一方法的匿名描述符。
+我们也可以使用某个类的某个具体方法来代表这个描述符，叫做方法引用。例如：
+    Integer::parseInt //静态方法引用
+    System.out::print //实例方法引用
+    Person::new       //构造器引用
+下面是一组例子，教你使用方法引用代替λ表达式：
+    //c1 与 c2 是一样的（静态方法引用）
+    Comparator<Integer> c2 = (x, y) -> Integer.compare(x, y);
+    Comparator<Integer> c1 = Integer::compare;
+    
+    //下面两句是一样的（实例方法引用1）
+    persons.forEach(e -> System.out.println(e));
+    persons.forEach(System.out::println);
+    
+    //下面两句是一样的（实例方法引用2）
+    persons.forEach(person -> person.eat());
+    persons.forEach(Person::eat);
+    
+    //下面两句是一样的（构造器引用）
+    strList.stream().map(s -> new Integer(s));
+    strList.stream().map(Integer::new);
+    还有一些其它的方法引用:
+    super::toString //引用某个对象的父类方法
+    String[]::new //引用一个数组的构造器
+================================= 默认方法（Default method） ==========================================
+Java8中，接口声明里可以有方法实现了，叫做默认方法。在此之前，接口里的方法全部是抽象方法。
+    public interface MyInterf {
+    
+        String m1();
+        
+        default String m2() {
+            return "Hello default method!";
+        }
+        
+    }
+    
+这实际上混淆了接口和抽象类，但一个类仍然可以实现多个接口，而只能继承一个抽象类。
+除了默认方法，Java8的接口也可以有静态方法的实现：
+    public interface MyInterf {
+    
+        String m1();
+        
+        default String m2() {
+            return "Hello default method!";
+        }
+        
+        static String m3() {
+            return "Hello static method in Interface!";
+        }
+        
+    }
+    
+================================= 生成器函数（Generator function） =====================================
+有时候一个流的数据源不一定是一个已存在的集合对象，也可能是个“生成器函数”。一个生成器函数会产生一系列元素，供给一个流。
+Stream.generate(Supplier<T> s)就是一个生成器函数。其中参数Supplier是一个函数接口，里面有唯一的抽象方法 <T> get()。
+下面这个例子生成并打印5个随机数：
+    Stream.generate(Math::random).limit(5).forEach(System.out::println);
+注意这个limit(5)，如果没有这个调用，那么这条语句会永远地执行下去。也就是说这个生成器是无穷的。这种调用叫做终结操作，或者短路（short-circuiting）操作。
+
+
+

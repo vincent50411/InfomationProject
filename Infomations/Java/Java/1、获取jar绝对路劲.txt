@@ -1,0 +1,28 @@
+获取jar的绝对路径 或者jar的上层目录
+
+
+
+String jarWholePath = MyClass.class.getProtectionDomain().getCodeSource().getLocation().getFile();  
+try {  
+    //如果路径中有中文字符，则需要转码，不然会是乱码
+    jarWholePath = java.net.URLDecoder.decode(jarWholePath, "UTF-8");  
+} catch (UnsupportedEncodingException e) { System.out.println(e.toString()); }  
+String jarPath = new File(jarWholePath).getParentFile().getAbsolutePath();  
+
+
+public static void main(String[] args)
+    {
+        Test test = new Test();
+
+        String path = test.getClass().getProtectionDomain().getCodeSource().getLocation().getFile();
+	
+	//获取上层的上层目录
+        String jarPath = new File(path).getParentFile().getParentFile().getParent();
+
+        jarPath = jarPath.substring(6, jarPath.length());
+
+        System.out.println(jarPath);
+
+    }
+
+
